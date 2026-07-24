@@ -1,0 +1,3085 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>INCIDENT ACCIDENT COMMAND CENTER</title>
+  <meta name="theme-color" content="#070b18">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Command Center">
+  <!-- ไอคอน/มานิเฟสต์ ถูกฉีดโดย JS ตอนรัน (คงหลักไฟล์เดียว ไม่ต้องมีไฟล์รูปแยก) -->
+
+<!-- ============================================================= -->
+<!-- EXTERNAL LIBRARIES (CDN)                                       -->
+<!-- ============================================================= -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+<!-- ============================================================= -->
+<!-- CUSTOM STYLES (CYBER GLASSMORPHISM + THEMING)                  -->
+<!-- ============================================================= -->
+<style id="tw-embed">
+  /* ===== Preflight (เทียบเท่า Tailwind reset เดิม เพื่อให้หน้าตาคงเดิม) ===== */
+  *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:currentColor}
+  html{line-height:1.5;-webkit-text-size-adjust:100%;tab-size:4}
+  body{margin:0;line-height:inherit}
+  h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit;margin:0}
+  p,figure,blockquote,dl,dd,pre{margin:0}
+  a{color:inherit;text-decoration:inherit}
+  b,strong{font-weight:bolder}
+  code,kbd,samp,pre{font-family:'Share Tech Mono',monospace;font-size:1em}
+  small{font-size:80%}
+  table{text-indent:0;border-color:inherit;border-collapse:collapse}
+  button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}
+  button,select{text-transform:none}
+  button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}
+  :-moz-focusring{outline:auto}
+  progress{vertical-align:baseline}
+  summary{display:list-item}
+  ol,ul,menu{list-style:none;margin:0;padding:0}
+  textarea{resize:vertical}
+  input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}
+  button,[role=button]{cursor:pointer}
+  :disabled{cursor:default}
+  img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}
+  img,video{max-width:100%;height:auto}
+  [hidden]{display:none}
+
+  /* ===== Utilities (เฉพาะที่ไฟล์ใช้จริง) ===== */
+  .block{display:block}.hidden{display:none}.flex{display:flex}.grid{display:grid}
+  .relative{position:relative}.absolute{position:absolute}
+  .min-h-screen{min-height:100vh}.w-full{width:100%}.w-6{width:1.5rem}
+  .flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.min-w-0{min-width:0}
+  .grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
+  .items-center{align-items:center}.items-start{align-items:flex-start}
+  .justify-between{justify-content:space-between}.justify-end{justify-content:flex-end}
+  .place-items-center{place-items:center}.mx-auto{margin-left:auto;margin-right:auto}
+  .text-center{text-align:center}.text-left{text-align:left}.text-right{text-align:right}
+  .overflow-auto{overflow:auto}
+  .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .whitespace-nowrap{white-space:nowrap}.opacity-50{opacity:.5}
+  .leading-none{line-height:1}.leading-tight{line-height:1.25}
+  .tracking-widest{letter-spacing:.1em}.tracking-\[0\.35em\]{letter-spacing:.35em}
+  .max-w-\[1575px\]{max-width:1575px}
+  .left-3\.5{left:.875rem}.top-1\/2{top:50%}.-translate-y-1\/2{transform:translateY(-50%)}
+  .gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}
+  .mb-2{margin-bottom:.5rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}
+  .mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-6{margin-top:1.5rem}.mr-1{margin-right:.25rem}
+  .space-y-3>*+*{margin-top:.75rem}.space-y-4>*+*{margin-top:1rem}
+  .p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}
+  .px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}
+  .py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-4{padding-top:1rem;padding-bottom:1rem}
+  .py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}
+  .pb-4{padding-bottom:1rem}.pb-6{padding-bottom:1.5rem}.pt-0\.5{padding-top:.125rem}.pt-1{padding-top:.25rem}
+  .font-black{font-weight:900}
+  .text-xs{font-size:.75rem;line-height:1rem}.text-sm{font-size:.875rem;line-height:1.25rem}
+  .text-lg{font-size:1.125rem;line-height:1.75rem}.text-xl{font-size:1.25rem;line-height:1.75rem}
+  .text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}
+  .text-\[0\.62rem\]{font-size:.62rem}.text-\[0\.6rem\]{font-size:.6rem}
+
+  @media (min-width:640px){
+    .sm\:flex-row{flex-direction:row}.sm\:gap-4{gap:1rem}
+    .sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .sm\:p-5{padding:1.25rem}.sm\:p-6{padding:1.5rem}.sm\:p-7{padding:1.75rem}
+    .sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:px-7{padding-left:1.75rem;padding-right:1.75rem}
+    .sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-xl{font-size:1.25rem;line-height:1.75rem}
+    .sm\:text-xs{font-size:.75rem;line-height:1rem}.sm\:text-\[0\.65rem\]{font-size:.65rem}
+  }
+  @media (min-width:768px){
+    .md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
+  @media (min-width:1024px){
+    .lg\:flex-row{flex-direction:row}.lg\:gap-4{gap:1rem}
+    .lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .lg\:items-center{align-items:center}.lg\:justify-between{justify-content:space-between}
+    .lg\:ml-auto{margin-left:auto}.lg\:text-\[1\.7rem\]{font-size:1.7rem}
+  }
+</style>
+
+<style>
+  /* ---------- DARK THEME (default) — Premium Navy & Gold ---------- */
+  :root,
+  [data-theme="dark"] {
+    --bg-deep:      #070d1c;
+    --bg-panel:     #0e1c38;
+    --glass:        rgba(16, 30, 60, 0.58);
+    --glass-border: rgba(212, 175, 55, 0.22);
+    --thead-bg:     rgba(9, 16, 34, 0.94);
+
+    --neon-cyan:    #ecc56a;   /* แอคเซนต์หลัก = ทอง */
+    --neon-cyan-d:  #c9a23f;
+    --accent-blue:   #5b8def;
+    --accent-violet: #8ea8e8;
+    --accent-magenta:#e9c46a;
+    --emergency:    #ff5d73;
+    --warning:      #f2b950;
+    --success:      #34d6a4;
+
+    --text:         #e9eefb;
+    --text-strong:  #ffffff;
+    --text-dim:     #93a3c8;
+
+    --input-bg:     rgba(9,18,40,0.7);
+    --input-bg-focus: rgba(12,22,48,0.96);
+    --grid:         rgba(120,150,220,0.06);
+    --export-bg:    #070d1c;
+    --chart-grid:   rgba(150,170,220,0.10);
+    --chart-tick:   #93a3c8;
+    --chart-border: #070d1c;
+    --chip-bg:      rgba(236,197,106,0.14);
+
+    --accent-line:  linear-gradient(90deg, transparent, var(--accent-blue) 22%, var(--neon-cyan) 55%, #f4dd9a 75%, transparent);
+    --glow:         rgba(236,197,106,0.26);
+    --shadow:       rgba(0,0,0,0.5);
+
+    --body-bg:
+      radial-gradient(820px 560px at 8% -6%, rgba(91,141,239,0.16), transparent 60%),
+      radial-gradient(760px 600px at 94% 2%, rgba(236,197,106,0.14), transparent 58%),
+      radial-gradient(700px 560px at 90% 98%, rgba(91,141,239,0.12), transparent 60%),
+      radial-gradient(720px 620px at 14% 108%, rgba(236,197,106,0.08), transparent 60%),
+      linear-gradient(180deg, #070d1c 0%, #0a1530 55%, #060a18 100%);
+  }
+
+  /* ---------- LIGHT THEME — Peach & Pastel Green (ส้มอ่อน-เขียวพาสเทล) ---------- */
+  [data-theme="light"] {
+    --bg-deep:      #f5f4ec;
+    --bg-panel:     #fffaf2;                      /* ครีมอุ่น (tooltip/select) */
+    --glass:        rgba(255, 250, 241, 0.82);    /* การ์ดพื้นครีมอ่อน ไม่ใช่ขาวล้วน */
+    --glass-border: rgba(60, 175, 130, 0.30);     /* ขอบเขียวพาสเทล */
+    --thead-bg:     rgba(244, 250, 241, 0.96);
+
+    --neon-cyan:    #16a37a;                       /* สีหลัก = เขียวพาสเทลเข้ม (หัวข้อ/ปุ่ม/chip) */
+    --neon-cyan-d:  #11906a;
+    --accent-blue:   #2bb89a;                      /* เขียวเทอร์ควอยซ์ */
+    --accent-violet: #7bc86a;                      /* เขียวใบไม้ */
+    --accent-magenta:#f59331;                      /* ส้มพีช (ปิดท้ายเส้นไล่เฉดให้อุ่น) */
+    --emergency:    #f0703a;                        /* ส้มแดงนุ่ม */
+    --warning:      #f59e0b;                        /* ส้ม */
+    --success:      #1fae6f;                        /* เขียว */
+
+    --text:         #2a3128;
+    --text-strong:  #18211a;
+    --text-dim:     #6d7768;
+
+    --input-bg:     rgba(255,252,246,0.95);
+    --input-bg-focus: #fffdf9;
+    --grid:         rgba(60,175,130,0.06);
+    --export-bg:    #f5f4ec;
+    --chart-grid:   rgba(40,49,40,0.07);
+    --chart-tick:   #6d7768;
+    --chart-border: #fffaf2;
+    --chip-bg:      rgba(22,163,122,0.13);
+
+    --accent-line:  linear-gradient(90deg, transparent, var(--neon-cyan) 20%, var(--accent-blue) 42%, var(--accent-violet) 62%, var(--warning) 80%, var(--accent-magenta) 92%, transparent);
+    --glow:         rgba(120,195,135,0.22);
+    --shadow:       rgba(120,110,70,0.15);
+
+    --body-bg:
+      radial-gradient(760px 520px at 6% -8%, rgba(245,165,85,0.22), transparent 60%),
+      radial-gradient(720px 560px at 96% 0%, rgba(110,200,140,0.22), transparent 58%),
+      radial-gradient(680px 520px at 90% 100%, rgba(245,140,70,0.16), transparent 60%),
+      radial-gradient(700px 600px at 8% 110%, rgba(120,205,150,0.18), transparent 60%),
+      radial-gradient(520px 420px at 50% 45%, rgba(255,205,140,0.08), transparent 70%),
+      linear-gradient(160deg, #fef2e3 0%, #f0f8ea 50%, #fef0e2 100%);
+  }
+
+  * { -webkit-font-smoothing: antialiased; }
+  html, body { height: 100%; }
+
+  /* แถบสีพรีเมียมด้านบนสุด (signature) */
+  .top-accent {
+    position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60;
+    background: var(--accent-line); opacity: .9; pointer-events: none;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    color: var(--text);
+    background: var(--bg-deep);
+    overflow-x: hidden;
+    position: relative;
+    transition: background .4s ease, color .4s ease;
+  }
+
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2;
+    background: var(--body-bg);
+    transition: background .4s ease;
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: -1; opacity: .6;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 46px 46px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
+            mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
+  }
+
+  .font-display { font-family: 'Orbitron', sans-serif; letter-spacing: .06em; }
+  .font-mono    { font-family: 'Share Tech Mono', monospace; }
+
+  .text-cyan   { color: var(--neon-cyan); }
+  .text-emerg  { color: var(--emergency); }
+  .text-warn   { color: var(--warning); }
+  .text-dim    { color: var(--text-dim); }
+  .text-strong { color: var(--text-strong); }
+
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    box-shadow: 0 10px 44px var(--shadow), 0 0 30px -18px var(--glow), inset 0 1px 0 rgba(255,255,255,0.06);
+    position: relative; overflow: hidden;
+    transition: background .4s ease, border-color .4s ease, box-shadow .4s ease;
+  }
+  .glass::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent-line);
+    opacity: .8;
+  }
+
+  .glass-title {
+    font-family: 'Orbitron', sans-serif; letter-spacing: .12em;
+    font-size: .72rem; text-transform: uppercase; color: var(--neon-cyan);
+  }
+  .grad-text {
+    background: linear-gradient(100deg, var(--neon-cyan), var(--accent-blue) 48%, var(--accent-violet));
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent;
+  }
+
+  /* การ์ดสรุปยอด — สไตล์ผลิตภัณฑ์ ทึบสดใส ไล่เฉด เงาวาว (สีคงที่ทั้ง 2 โหมด) */
+  .kpi-product {
+    position: relative; overflow: hidden; border: none !important; border-radius: 20px; color: #fff;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .kpi-product > * { position: relative; z-index: 2; }
+  .kpi-product::before {            /* ไฮไลต์มันวาวมุมบนซ้าย */
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.05) 38%, rgba(255,255,255,0) 60%);
+  }
+  .kpi-product::after {             /* แสงวงรีเงาวาว */
+    content: ""; position: absolute; right: -40px; top: -50px; width: 180px; height: 180px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.25), transparent 70%); z-index: 1; pointer-events: none;
+  }
+  .kpi-product:hover { transform: translateY(-5px); }
+
+  .kpi-cyan  { background: linear-gradient(135deg, #2ad8f0 0%, #0ea5e9 52%, #2563eb 100%); box-shadow: 0 14px 38px rgba(14,165,233,.42), inset 0 1px 0 rgba(255,255,255,.4); }
+  .kpi-cyan:hover  { box-shadow: 0 20px 50px rgba(14,165,233,.55), inset 0 1px 0 rgba(255,255,255,.5); }
+  .kpi-amber { background: linear-gradient(135deg, #ffcf4d 0%, #f59e0b 52%, #f9701b 100%); box-shadow: 0 14px 38px rgba(245,140,11,.42), inset 0 1px 0 rgba(255,255,255,.4); }
+  .kpi-amber:hover { box-shadow: 0 20px 50px rgba(245,140,11,.55), inset 0 1px 0 rgba(255,255,255,.5); }
+  .kpi-rose  { background: linear-gradient(135deg, #ff7d97 0%, #f43f5e 52%, #d81e54 100%); box-shadow: 0 14px 38px rgba(244,63,94,.42), inset 0 1px 0 rgba(255,255,255,.4); }
+  .kpi-rose:hover  { box-shadow: 0 20px 50px rgba(244,63,94,.55), inset 0 1px 0 rgba(255,255,255,.5); }
+  .kpi-violet { background: linear-gradient(135deg, #a78bfa 0%, #7c5cff 52%, #6d3bef 100%); box-shadow: 0 14px 38px rgba(124,92,255,.42), inset 0 1px 0 rgba(255,255,255,.4); }
+  .kpi-violet:hover { box-shadow: 0 20px 50px rgba(124,92,255,.55), inset 0 1px 0 rgba(255,255,255,.5); }
+
+  .kpi-product .stat-icon { background: rgba(255,255,255,.22); border: 1px solid rgba(255,255,255,.42); color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+  .kpi-title { font-size: .82rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 800; color: rgba(255,255,255,.95); }
+  .kpi-num   { color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.22); font-size: 3rem; line-height: 1.02; letter-spacing: -.5px; }
+  .kpi-sub   { color: rgba(255,255,255,.82); font-size: .82rem; font-weight: 600; }
+  /* ค่าประเภทเหตุการณ์: แสดงครบ (ตัดบรรทัดแทน ...) */
+  .topcat-val { font-size: 1.15rem; line-height: 1.22; white-space: normal; word-break: break-word; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .stat-icon { width: 60px; height: 60px; border-radius: 16px; display: grid; place-items: center; font-size: 1.6rem; }
+
+  .cy-label { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: block; }
+  .cy-input, .cy-select, .cy-textarea {
+    width: 100%; background: var(--input-bg);
+    border: 1px solid var(--glass-border); border-radius: 11px;
+    padding: 11px 14px; color: var(--text);
+    font-family: 'IBM Plex Sans Thai', sans-serif; font-size: .92rem;
+    transition: border-color .2s, box-shadow .2s, background .2s; outline: none;
+  }
+  .cy-input::placeholder, .cy-textarea::placeholder { color: var(--text-dim); opacity: .7; }
+  .cy-input:focus, .cy-select:focus, .cy-textarea:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 3px rgba(0,240,255,0.12), 0 0 18px rgba(0,240,255,0.15);
+    background: var(--input-bg-focus);
+  }
+  .cy-input.invalid, .cy-select.invalid, .cy-textarea.invalid {
+    border-color: var(--emergency); box-shadow: 0 0 0 3px rgba(255,45,85,0.14);
+  }
+  .cy-select option { background: var(--bg-panel); color: var(--text); }
+  [data-theme="dark"] input[type="date"], [data-theme="dark"] input[type="time"] { color-scheme: dark; }
+  [data-theme="light"] input[type="date"], [data-theme="light"] input[type="time"] { color-scheme: light; }
+
+  .btn {
+    font-family: 'Orbitron', sans-serif; letter-spacing: .06em; font-size: .78rem;
+    text-transform: uppercase; font-weight: 600; border-radius: 11px; padding: 12px 18px;
+    cursor: pointer; border: 1px solid transparent; transition: all .22s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; user-select: none;
+  }
+  .btn-cyan  { color: #001016; background: linear-gradient(120deg, var(--neon-cyan) 0%, var(--accent-blue) 55%, var(--accent-violet) 110%); }
+  .btn-cyan:hover  { box-shadow: 0 6px 26px -4px var(--accent-blue), 0 0 22px rgba(34,230,255,0.45); transform: translateY(-2px); }
+  .btn-cyan:active { transform: translateY(0); }
+  .btn-ghost { color: var(--neon-cyan); background: rgba(34,230,255,0.07); border-color: rgba(34,230,255,0.32); }
+  .btn-ghost:hover { background: rgba(34,230,255,0.15); box-shadow: 0 0 18px rgba(34,230,255,0.22); }
+  .btn-warn  { color: #1a1000; background: linear-gradient(120deg, var(--warning), #ff7a45); }
+  .btn-warn:hover  { box-shadow: 0 6px 24px -4px rgba(255,122,69,0.5); transform: translateY(-2px); }
+  .btn-emerg { color: #fff; background: linear-gradient(120deg, var(--emergency), var(--accent-magenta)); }
+  .btn-emerg:hover { box-shadow: 0 6px 24px -4px rgba(255,92,200,0.5); transform: translateY(-2px); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; position: relative; }
+  .status-dot.online  { background: var(--success);  box-shadow: 0 0 10px var(--success); animation: pulse 1.8s infinite; }
+  .status-dot.offline { background: var(--emergency); box-shadow: 0 0 10px var(--emergency); }
+  .status-dot.loading { background: var(--warning);   box-shadow: 0 0 10px var(--warning); animation: pulse 1s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(45,255,176,0.5); } 70% { box-shadow: 0 0 0 7px rgba(45,255,176,0); } 100% { box-shadow: 0 0 0 0 rgba(45,255,176,0); } }
+
+  .scanline { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--accent-line); animation: scan 4.5s linear infinite; opacity: .7; }
+  @keyframes scan { 0% { transform: translateY(0); } 100% { transform: translateY(96px); } }
+
+  table { border-collapse: collapse; width: 100%; min-width: 760px; }
+  thead th {
+    font-family: 'Orbitron', sans-serif; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--neon-cyan); text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--glass-border);
+    white-space: nowrap; position: sticky; top: 0; background: var(--thead-bg); backdrop-filter: blur(6px);
+  }
+  tbody td { padding: 12px 14px; font-size: .88rem; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
+  tbody tr { transition: background .15s; }
+  tbody tr:hover { background: rgba(0,240,255,0.06); }
+
+  .floor-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .74rem; font-weight: 600; background: var(--chip-bg); color: var(--neon-cyan); border: 1px solid var(--glass-border); white-space: nowrap; }
+
+  .icon-btn { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; border: 1px solid var(--glass-border); background: rgba(127,127,127,0.05); color: var(--text-dim); cursor: pointer; transition: all .18s; font-size: .82rem; }
+  .icon-btn:hover { color: var(--neon-cyan); border-color: var(--neon-cyan); box-shadow: 0 0 12px rgba(0,240,255,0.2); }
+  .icon-btn.danger:hover { color: var(--emergency); border-color: var(--emergency); box-shadow: 0 0 12px rgba(255,45,85,0.2); }
+
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,240,255,0.25); border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,240,255,0.45); }
+
+  #toast-wrap { position: fixed; top: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; max-width: calc(100vw - 44px); }
+  .toast { min-width: 240px; padding: 13px 16px; border-radius: 12px; backdrop-filter: blur(12px); border: 1px solid; display: flex; align-items: center; gap: 11px; font-size: .88rem; animation: toastIn .35s cubic-bezier(.2,.9,.3,1.4); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+  .toast.success { background: rgba(45,255,176,0.14); border-color: rgba(45,255,176,0.45); color: var(--success); }
+  .toast.error   { background: rgba(255,45,85,0.14);  border-color: rgba(255,45,85,0.45);  color: var(--emergency); }
+  .toast.info    { background: rgba(0,240,255,0.12);   border-color: rgba(0,240,255,0.45);  color: var(--neon-cyan); }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+  .modal-backdrop { position: fixed; inset: 0; z-index: 9000; display: none; background: rgba(2,4,12,0.7); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px; }
+  .modal-backdrop.open { display: flex; }
+
+  .reveal { opacity: 0; transform: translateY(18px); animation: reveal .6s ease forwards; }
+  @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .reveal, .scanline, .status-dot { animation: none !important; } .reveal { opacity: 1; transform: none; } }
+
+  .empty-row td { text-align: center; color: var(--text-dim); padding: 36px 0; font-style: italic; }
+
+  /* collapsible New Report form */
+  #form-toggle { border-radius: 18px 18px 0 0; transition: background .2s; }
+  #form-toggle:hover { background: rgba(34,230,255,0.05) !important; }
+  .form-collapse { overflow: hidden; max-height: 2200px; opacity: 1; transition: max-height .45s ease, opacity .3s ease; }
+  .form-collapse:not(.open) { max-height: 0; opacity: 0; }
+
+  /* dual chart boxes */
+  .chart-box { background: rgba(128,128,128,0.045); border: 1px solid var(--glass-border); border-radius: 14px; padding: 14px 16px 16px; }
+  .chart-box-title { font-family: 'Orbitron', sans-serif; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--neon-cyan); margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+
+  /* theme toggle knob */
+  .theme-toggle { position: relative; width: 58px; height: 30px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--input-bg); cursor: pointer; transition: all .3s; flex-shrink: 0; }
+  .theme-toggle .knob { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-cyan-d)); display: grid; place-items: center; color: #001016; font-size: .72rem; transition: transform .3s cubic-bezier(.2,.9,.3,1.4); }
+  [data-theme="light"] .theme-toggle .knob { transform: translateX(28px); }
+  /* ===== Responsive (มือถือ/แท็บเล็ต) ===== */
+  @media (max-width: 640px) {
+    /* ช่องค้นหา + ตัวกรอง เต็มความกว้างบนมือถือ */
+    #search { min-width: 0 !important; width: 100%; }
+    #filter-floor { min-width: 0 !important; width: 100%; }
+    /* แถบเครื่องมือตาราง: ค้นหา/กรองเต็มแถว ปุ่มเรียงเป็นแถว */
+    .table-toolbar { width: 100%; }
+    .table-toolbar > .relative, .table-toolbar > #filter-floor { flex: 1 1 100%; }
+    .table-toolbar .btn { flex: 1 1 auto; justify-content: center; }
+    /* การ์ด KPI: ตัวเลขพอดีจอเล็ก */
+    .kpi-num { font-size: 2.5rem !important; }
+    /* ลด padding ส่วนหลักให้ได้พื้นที่มากขึ้น */
+    .glass.reveal { border-radius: 16px; }
+    /* แถบกรองช่วงเวลา ให้ปุ่มยืดเต็ม */
+    .range-bar .btn { flex: 1 1 auto; }
+  }
+  @media (max-width: 400px) {
+    .kpi-num { font-size: 2.15rem !important; }
+    .stat-icon { width: 50px; height: 50px; font-size: 1.35rem; }
+  }
+  /* แตะเลื่อนแนวนอนลื่นบน iOS สำหรับองค์ประกอบที่ scroll ได้ */
+  .overflow-auto, .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+  /* ===== โหมดนำเสนอเต็มจอ ===== */
+  body.presenting .no-present { display: none !important; }
+  body.presenting .max-w-\[1575px\] { max-width: 100% !important; }
+  body.presenting #analytics-cards { margin-bottom: 1.5rem; }
+  body.presenting .kpi-num { font-size: 3.2rem !important; }
+  body.presenting .kpi-title { font-size: .9rem; }
+  body.presenting #chart-grid { gap: 1.5rem; }
+  /* ปุ่มออกจากโหมดนำเสนอ (ลอยมุมขวาบน) */
+  #present-exit { display: none; position: fixed; top: 14px; right: 14px; z-index: 70; }
+  body.presenting #present-exit { display: inline-flex; }
+  body.presenting #btn-present { display: none; }
+  /* ===== Responsive balance เพิ่มเติม ===== */
+  @media (min-width: 641px) and (max-width: 1023px) {
+    #analytics-cards > div { min-height: 130px; align-items: center; }
+    .kpi-num { font-size: 2.7rem !important; }
+  }
+  @media (min-width: 1024px) and (max-width: 1280px) {
+    .kpi-num { font-size: 2.6rem !important; }
+    #stat-topcat { font-size: 1rem !important; }
+  }
+  @media (max-width: 640px) {
+    #chart-grid { gap: 1rem; }
+  }
+  /* ===== ความสูงกราฟ/ตาราง ปรับตามขนาดจอ (จอใหญ่เห็นข้อมูลมากขึ้น) ===== */
+  .chart-h { height: 340px; }
+  .table-scroll { max-height: 460px; }
+  @media (min-width: 1024px) {
+    .chart-h { height: 420px; }
+    .table-scroll { max-height: 640px; }
+  }
+  @media (min-width: 1440px) {
+    .chart-h { height: 470px; }
+    .table-scroll { max-height: 760px; }
+  }
+  /* ===== Compact vertical layout (~10% กระชับขึ้น) ===== */
+  .mb-6 { margin-bottom: 1.35rem; }
+  .mb-5 { margin-bottom: 1.1rem; }
+  .mb-4 { margin-bottom: .85rem; }
+  .mt-6 { margin-top: 1.3rem; }
+  .gap-5 { gap: 1.05rem; }
+  .p-6 { padding: 1.3rem; }
+  .p-5 { padding: 1.05rem; }
+  .p-4 { padding: .85rem; }
+  .py-6 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+  .py-5 { padding-top: 1rem; padding-bottom: 1rem; }
+  .py-4 { padding-top: .8rem; padding-bottom: .8rem; }
+  #analytics-cards > div { min-height: 0; }
+  /* กราฟเตี้ยลงให้กระชับ (ยังเห็นข้อมูลครบ) */
+  .chart-h { height: 300px; }
+  @media (min-width: 1024px) { .chart-h { height: 360px; } }
+  @media (min-width: 1440px) { .chart-h { height: 400px; } }
+</style>
+
+<style id="brand-splash-style">
+  /* ===== SPLASH / IDLE-LOCK OVERLAY (โลโก้แอป + เอฟเฟค) ===== */
+  #brand-splash {
+    position: fixed; inset: 0; z-index: 2147483000;
+    display: grid; place-items: center;
+    background:
+      radial-gradient(120% 90% at 50% 30%, #0b1636 0%, #070b1c 60%, #04060d 100%);
+    opacity: 0; visibility: hidden;
+    transition: opacity .55s ease, visibility .55s ease;
+    -webkit-tap-highlight-color: transparent; user-select: none; overflow: hidden; pointer-events: none;
+  }
+  #brand-splash.show { opacity: 1; visibility: visible; pointer-events: auto; }
+  #brand-splash::before { /* สแกนไลน์กวาดแนวตั้ง */
+    content: ""; position: absolute; left: 0; right: 0; height: 34%;
+    background: linear-gradient(180deg, transparent, #00e5ff18, transparent);
+    animation: brandScan 4.2s linear infinite; pointer-events: none;
+  }
+  @keyframes brandScan { 0% { top: -34%; } 100% { top: 100%; } }
+
+  .brand-stage { position: relative; display: flex; flex-direction: column; align-items: center; gap: 26px; padding: 24px; }
+  .brand-logo-wrap { position: relative; width: 168px; height: 168px; display: grid; place-items: center; animation: brandFloat 5.5s ease-in-out infinite; }
+  @keyframes brandFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+  .brand-ring { position: absolute; inset: -30px; border-radius: 50%; pointer-events: none; }
+  .brand-ring::before { /* วงเรดาร์หมุน */
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0 78%, #00e5ff88 90%, transparent 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    animation: brandRing 3.4s linear infinite;
+  }
+  .brand-ring::after { content: ""; position: absolute; inset: 12px; border-radius: 50%; border: 1px dashed #00e5ff33; animation: brandRing 9s linear infinite reverse; }
+  @keyframes brandRing { to { transform: rotate(360deg); } }
+
+  .brand-logo { width: 132px; height: 132px; border-radius: 30px; overflow: hidden;
+    box-shadow: 0 0 0 1px #00e5ff44, 0 18px 50px -12px #00e5ff66;
+    animation: brandGlow 2.8s ease-in-out infinite, brandPop .8s cubic-bezier(.2,.9,.25,1.2) both; }
+  .brand-logo svg { display: block; width: 100%; height: 100%; }
+  @keyframes brandGlow { 0%,100% { box-shadow: 0 0 0 1px #00e5ff44, 0 14px 40px -14px #00e5ff55; }
+                         50% { box-shadow: 0 0 0 1px #00e5ff88, 0 22px 66px -10px #00e5ffaa; } }
+  @keyframes brandPop { 0% { transform: scale(.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  .brand-text { text-align: center; animation: brandUp .9s ease .15s both; }
+  @keyframes brandUp { 0% { transform: translateY(14px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+  .brand-title { font-family: 'Orbitron','IBM Plex Sans Thai',sans-serif; font-weight: 800; letter-spacing: .16em;
+    font-size: clamp(1.05rem, 4.5vw, 1.5rem); color: #eaf6ff;
+    background: linear-gradient(90deg, #00e5ff, #7cf6ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .brand-sub { margin-top: 8px; font-family: 'Share Tech Mono','IBM Plex Sans Thai',monospace; font-size: .72rem;
+    letter-spacing: .34em; color: #00e5ff; opacity: .85; text-transform: uppercase; }
+  .brand-hint { margin-top: 4px; font-family: 'IBM Plex Sans Thai',sans-serif; font-size: .82rem; color: #9fb2d8;
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 99px;
+    border: 1px solid #00e5ff30; background: #00e5ff0f; animation: brandBlink 1.8s ease-in-out infinite; }
+  @keyframes brandBlink { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+  .brand-hint.boot { display: none; }            /* ตอนบูต ไม่ต้องมีข้อความ "แตะเพื่อเข้า" */
+  #brand-splash.locked .brand-hint.boot { display: inline-flex; }
+  #brand-splash.locked .brand-hint.loading { display: none; }
+  .brand-dots { display: inline-flex; gap: 5px; }
+  .brand-dots i { width: 7px; height: 7px; border-radius: 50%; background: #00e5ff; display: inline-block; animation: brandDot 1.2s ease-in-out infinite; }
+  .brand-dots i:nth-child(2) { animation-delay: .2s; } .brand-dots i:nth-child(3) { animation-delay: .4s; }
+  @keyframes brandDot { 0%,100% { transform: scale(.6); opacity: .4; } 50% { transform: scale(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    #brand-splash *, #brand-splash::before { animation: none !important; }
+  }
+</style>
+</head>
+
+<body class="min-h-screen">
+
+<div class="top-accent"></div>
+<button id="present-exit" onclick="togglePresentation()" class="btn btn-ghost" title="ออกจากโหมดนำเสนอ (Esc)"><i class="fa-solid fa-compress"></i> ออก</button>
+<div id="toast-wrap"></div>
+
+<div class="max-w-[1575px] mx-auto px-4 sm:px-6 py-6">
+
+  <!-- HEADER -->
+  <header class="glass reveal px-5 sm:px-7 py-5 mb-3" style="animation-delay:.02s">
+    <div class="scanline"></div>
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+      <div class="flex items-center gap-4">
+        <div class="stat-icon" style="background:linear-gradient(135deg,rgba(255,45,85,0.22),rgba(255,159,10,0.16));border:1px solid rgba(255,45,85,0.4)">
+          <i class="fa-solid fa-tower-broadcast text-emerg" style="font-size:1.5rem"></i>
+        </div>
+        <div>
+          <h1 class="font-display font-black text-xl sm:text-2xl lg:text-[1.7rem] leading-none">
+            <span class="grad-text">INCIDENT</span>
+            <span class="text-emerg">ACCIDENT</span>
+          </h1>
+          <p class="font-display text-cyan text-[0.62rem] sm:text-xs tracking-[0.35em] mt-1">COMMAND&nbsp;CENTER</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+        <div class="glass px-4 py-2.5 flex items-center gap-3" style="border-radius:13px">
+          <i class="fa-regular fa-clock text-cyan"></i>
+          <div class="text-right">
+            <div id="clock-time" class="font-mono text-cyan text-lg sm:text-xl leading-none">--:--:--</div>
+            <div id="clock-date" class="font-mono text-dim text-[0.6rem] sm:text-[0.65rem] mt-1">--/--/----</div>
+          </div>
+        </div>
+        <div class="glass px-4 py-2.5 flex items-center gap-2.5" style="border-radius:13px">
+          <span id="status-dot" class="status-dot loading"></span>
+          <div class="leading-tight">
+            <div class="font-display text-[0.6rem] tracking-widest text-dim">GOOGLE&nbsp;SHEETS</div>
+            <div id="status-text" class="font-mono text-xs text-warn">CONNECTING…</div>
+          </div>
+        </div>
+        <!-- Theme toggle -->
+        <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="สลับโหมดมืด / สว่าง" aria-label="สลับธีม">
+          <span class="knob"><i id="theme-icon" class="fa-solid fa-moon"></i></span>
+        </button>
+        <select id="auto-refresh" onchange="setAutoRefresh(this.value)" class="cy-select" style="width:auto; padding:8px 10px; font-size:.78rem" title="อัปเดตอัตโนมัติ">
+          <option value="0">⏱️ อัปเดตเอง</option>
+          <option value="1">🔄 ทุก 1 นาที</option>
+          <option value="2">🔄 ทุก 2 นาที</option>
+          <option value="5">🔄 ทุก 5 นาที</option>
+          <option value="10">🔄 ทุก 10 นาที</option>
+        </select>
+        <span id="last-updated" class="text-dim" style="font-size:.72rem; white-space:nowrap"></span>
+        <button onclick="testConnection()" class="btn btn-ghost no-present" title="ทดสอบการเชื่อมต่อ Google Sheets (เปิดแท็บใหม่)"><i class="fa-solid fa-plug-circle-check"></i></button>
+        <button onclick="loadData()" class="btn btn-ghost" title="ดึงข้อมูลล่าสุด"><i class="fa-solid fa-rotate"></i></button>
+        <button id="btn-present" onclick="togglePresentation()" class="btn btn-cyan" title="โหมดนำเสนอเต็มจอ (ขึ้นจอ Command Center)"><i class="fa-solid fa-expand"></i> <span class="present-label">นำเสนอ</span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- DATE RANGE FILTER -->
+  <section class="glass reveal p-4 sm:p-5 mb-6" style="animation-delay:.04s">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 flex-wrap">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-calendar-week text-cyan"></i>
+        <span class="glass-title" style="font-size:.8rem">ช่วงเวลารายงาน</span>
+      </div>
+
+      <div class="range-bar flex gap-2 flex-wrap">
+        <button id="rmode-all"   onclick="setRangeMode('all')"   class="btn btn-cyan"  style="padding:8px 14px"><i class="fa-solid fa-infinity"></i> ทั้งหมด</button>
+        <button id="rmode-week"  onclick="setRangeMode('week')"  class="btn btn-ghost" style="padding:8px 14px"><i class="fa-solid fa-calendar-week"></i> รายสัปดาห์</button>
+        <button id="rmode-range" onclick="setRangeMode('range')" class="btn btn-ghost" style="padding:8px 14px"><i class="fa-solid fa-calendar-days"></i> เลือกช่วง</button>
+      </div>
+
+      <!-- week navigation -->
+      <div id="week-nav" class="flex items-center gap-2" style="display:none">
+        <button class="icon-btn" onclick="shiftWeek(-1)" title="สัปดาห์ก่อนหน้า"><i class="fa-solid fa-chevron-left"></i></button>
+        <span id="week-label" class="font-mono text-cyan text-sm whitespace-nowrap">—</span>
+        <button class="icon-btn" onclick="shiftWeek(1)" title="สัปดาห์ถัดไป"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="btn btn-ghost" style="padding:6px 12px" onclick="thisWeek()">สัปดาห์นี้</button>
+      </div>
+
+      <!-- custom range -->
+      <div id="range-pick" class="flex items-center gap-2 flex-wrap" style="display:none">
+        <input type="date" id="range-from" class="cy-input" style="width:auto" onchange="applyCustomRange()" />
+        <span class="text-dim">ถึง</span>
+        <input type="date" id="range-to" class="cy-input" style="width:auto" onchange="applyCustomRange()" />
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap lg:ml-auto">
+        <span class="floor-chip" id="range-summary">แสดงทั้งหมด</span>
+        <button id="btn-summary" onclick="copyExecutiveSummary()" class="btn btn-ghost" style="padding:8px 13px" title="คัดลอกบทสรุปผู้บริหารสำหรับนำเสนอ"><i class="fa-solid fa-clipboard"></i> สรุป</button>
+        <button id="btn-csv" onclick="exportCSV()" class="btn btn-ghost" style="padding:8px 13px" title="ดาวน์โหลด CSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
+        <button id="btn-report" onclick="openReportPreview()" class="btn btn-cyan" style="padding:8px 13px" title="ดูตัวอย่างรายงาน Infographic ก่อนส่งออก"><i class="fa-solid fa-chart-pie"></i> รายงาน</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALYTICS CARDS (สไตล์ผลิตภัณฑ์ สีแบรนด์คงที่ทั้ง 2 โหมด) -->
+  <section id="analytics-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+    <div class="kpi-product kpi-cyan reveal p-5 flex items-center gap-4" style="animation-delay:.08s">
+      <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+      <div class="flex-1 min-w-0">
+        <div class="kpi-title">ยอดรวมเหตุการณ์ทั้งหมด</div>
+        <div class="font-display font-black text-4xl kpi-num mt-1"><span id="stat-total">0</span></div>
+        <div class="kpi-sub text-xs mt-0.5">Total Incidents</div>
+        <div id="spark-total" style="margin-top:8px; height:34px;"></div>
+      </div>
+    </div>
+    <div class="kpi-product kpi-amber reveal p-5 flex items-center gap-4" style="animation-delay:.14s">
+      <div class="stat-icon"><i class="fa-solid fa-calendar-day"></i></div>
+      <div class="min-w-0">
+        <div class="kpi-title">เหตุการณ์ประจำวันนี้</div>
+        <div class="font-display font-black text-4xl kpi-num mt-1"><span id="stat-today">0</span></div>
+        <div class="kpi-sub text-xs mt-0.5">Today's Incidents</div>
+      </div>
+    </div>
+    <div class="kpi-product kpi-rose reveal p-5 flex items-center gap-4" style="animation-delay:.20s">
+      <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="min-w-0">
+        <div class="kpi-title">ชั้นที่เกิดเหตุบ่อยที่สุด</div>
+        <div class="font-display font-black text-2xl kpi-num mt-1 truncate" id="stat-topfloor">—</div>
+        <div class="kpi-sub text-xs mt-0.5">Top Hazardous Floor · <span id="stat-topfloor-count">0</span> ครั้ง</div>
+      </div>
+    </div>
+    <div class="kpi-product kpi-violet reveal p-5 flex items-center gap-4" style="animation-delay:.26s">
+      <div class="stat-icon"><i class="fa-solid fa-notes-medical"></i></div>
+      <div class="min-w-0">
+        <div class="kpi-title">เหตุที่เกิดบ่อยที่สุด</div>
+        <div class="font-display font-black kpi-num mt-1 topcat-val" id="stat-topcat">—</div>
+        <div class="kpi-sub text-xs mt-0.5">Top Incident Type · <span id="stat-topcat-count">0</span> ครั้ง</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHART (full width) -->
+  <section id="chart-panel" class="glass reveal p-5 sm:p-6 flex flex-col mb-6" style="animation-delay:.26s">
+    <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-chart-column text-cyan"></i>
+        <h2 class="glass-title" style="font-size:.9rem">สถิติเหตุการณ์ · By Floor &amp; Type</h2>
+        <span class="floor-chip" id="chart-total-chip">0 เหตุการณ์</span>
+      </div>
+    </div>
+
+    <div id="chart-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- Bar -->
+      <div class="chart-box">
+        <div class="chart-box-title"><i class="fa-solid fa-chart-column"></i> ตามชั้น · Bar</div>
+        <div class="relative w-full chart-h">
+          <canvas id="floorChartBar"></canvas>
+        </div>
+      </div>
+      <!-- Pie -->
+      <div class="chart-box">
+        <div class="chart-box-title"><i class="fa-solid fa-chart-pie"></i> ตามชั้น · Pie</div>
+        <div class="relative w-full chart-h">
+          <canvas id="floorChartPie"></canvas>
+        </div>
+      </div>
+      <!-- Category / symptom stats -->
+      <div class="chart-box">
+        <div class="chart-box-title"><i class="fa-solid fa-notes-medical"></i> แยกตามอาการ · By Type</div>
+        <div id="cat-stats" class="cat-stats chart-h" style="overflow:auto; padding-right:4px"></div>
+      </div>
+    </div>
+
+    <div id="chart-empty" class="hidden place-items-center text-dim text-sm" style="display:none; padding:48px 0">
+      <div class="text-center"><i class="fa-solid fa-chart-simple text-3xl block mb-2 opacity-50"></i>ยังไม่มีข้อมูลสำหรับแสดงกราฟ</div>
+    </div>
+  </section>
+
+  <!-- NEW REPORT (collapsible, below chart) -->
+  <section class="glass reveal mb-6 no-present" style="animation-delay:.32s">
+    <button id="form-toggle" type="button" onclick="toggleForm()" aria-expanded="false" aria-controls="form-body"
+      class="w-full flex items-center justify-between gap-3 px-5 sm:px-6 py-4 text-left" style="background:transparent; border:0; cursor:pointer;">
+      <span class="flex items-center gap-2.5">
+        <i class="fa-solid fa-square-pen text-cyan"></i>
+        <span class="glass-title" style="font-size:.9rem">บันทึกเหตุการณ์ใหม่ · New Report</span>
+      </span>
+      <span class="flex items-center gap-2 text-dim" style="font-size:.78rem">
+        <span id="form-toggle-label">แสดง</span>
+        <i id="form-toggle-icon" class="fa-solid fa-chevron-up" style="transition:transform .3s ease; transform:rotate(180deg);"></i>
+      </span>
+    </button>
+
+    <div id="form-body" class="form-collapse">
+      <div class="px-5 sm:px-6 pb-6 pt-1 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="cy-label"><i class="fa-regular fa-calendar mr-1"></i> วันที่เกิดเหตุ *</label>
+            <input type="date" id="f-date" class="cy-input" />
+          </div>
+          <div>
+            <label class="cy-label"><i class="fa-regular fa-clock mr-1"></i> เวลา *</label>
+            <input type="time" id="f-time" class="cy-input" />
+          </div>
+          <div>
+            <label class="cy-label"><i class="fa-solid fa-building mr-1"></i> ชั้น *</label>
+            <select id="f-floor" class="cy-select"><option value="">— เลือกชั้น —</option></select>
+          </div>
+          <div>
+            <label class="cy-label"><i class="fa-solid fa-notes-medical mr-1"></i> ประเภทเหตุการณ์ / อาการ *</label>
+            <select id="f-category" class="cy-select"><option value="">— เลือกประเภท —</option></select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="cy-label"><i class="fa-solid fa-circle-info mr-1"></i> โซน</label>
+            <select id="f-floordetail" class="cy-select"><option value="">— เลือกโซน —</option></select>
+          </div>
+          <div>
+            <label class="cy-label"><i class="fa-solid fa-location-dot mr-1"></i> สถานที่เกิดเหตุ *</label>
+            <input type="text" id="f-location" class="cy-input" maxlength="200" placeholder="พิกัด / จุดติดตั้งกล้อง / บริเวณที่เกิดเหตุ" />
+          </div>
+        </div>
+        <div>
+          <label class="cy-label"><i class="fa-solid fa-file-lines mr-1"></i> รายละเอียดเหตุการณ์ *</label>
+          <textarea id="f-desc" rows="1" class="cy-textarea" maxlength="1000" placeholder="อธิบายลักษณะเหตุการณ์ ความเสียหาย และการดำเนินการเบื้องต้น…" style="min-height:46px"></textarea>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 pt-1">
+          <button id="btn-submit" onclick="submitForm()" class="btn btn-cyan flex-1"><i class="fa-solid fa-paper-plane"></i> บันทึกเหตุการณ์</button>
+          <button onclick="printWorkOrderFromForm()" class="btn btn-warn flex-1" title="พิมพ์ / ดาวน์โหลดใบงานสลักหลัง"><i class="fa-solid fa-print"></i> พิมพ์ใบงานสลักหลัง</button>
+          <button onclick="clearForm()" class="btn btn-ghost" title="ล้างฟอร์ม"><i class="fa-solid fa-eraser"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA TABLE -->
+  <section class="glass reveal p-5 sm:p-6 mb-6 no-present" style="animation-delay:.38s">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-table-list text-cyan"></i>
+        <h2 class="glass-title" style="font-size:.85rem">รายงานล่าสุด · Recent Reports</h2>
+        <span class="floor-chip" id="row-count">0 รายการ</span>
+      </div>
+      <div class="table-toolbar flex flex-wrap items-center gap-3">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-dim text-sm"></i>
+          <input type="text" id="search" oninput="debouncedRenderTable()" class="cy-input" placeholder="ค้นหาเหตุการณ์ / สถานที่…" style="padding-left:36px; min-width:220px" />
+        </div>
+        <select id="filter-floor" onchange="renderTable()" class="cy-select" style="min-width:160px"><option value="">ทุกชั้น</option></select>
+      </div>
+    </div>
+    <div class="overflow-auto table-scroll" style="-webkit-overflow-scrolling:touch">
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th style="width:42px">#</th><th>วันที่</th><th>เวลา</th><th>ชั้น</th>
+            <th>ประเภท/อาการ</th><th>โซน</th><th>สถานที่เกิดเหตุ</th><th>รายละเอียดเหตุการณ์</th><th style="width:120px">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="text-center text-dim text-xs pb-4 font-mono">
+    <i class="fa-solid fa-shield-halved text-cyan"></i>
+    INCIDENT ACCIDENT COMMAND CENTER · Glassmorphism Cyber Edition · v1.1
+  </footer>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detail-modal" class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+  <div class="glass p-6 sm:p-7 w-full" style="max-width:520px">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="glass-title" style="font-size:.9rem"><i class="fa-solid fa-file-shield mr-1"></i> รายละเอียดเหตุการณ์</h3>
+      <button onclick="closeModal()" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="modal-body" class="space-y-3 text-sm"></div>
+    <div class="flex gap-3 mt-6">
+      <button id="modal-print-btn" class="btn btn-warn flex-1"><i class="fa-solid fa-print"></i> พิมพ์ใบงานสลักหลัง</button>
+      <button onclick="closeModal()" class="btn btn-ghost"><i class="fa-solid fa-xmark"></i> ปิด</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT PREVIEW MODAL -->
+<div id="report-modal" class="modal-backdrop" onclick="if(event.target===this)closeReportModal()" style="z-index:9100;">
+  <div class="glass" style="width:100%; max-width:1080px; max-height:92vh; display:flex; flex-direction:column; padding:0; overflow:hidden;">
+    <div class="flex items-center justify-between gap-3 px-5 sm:px-6 py-4" style="border-bottom:1px solid var(--glass-border)">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-chart-pie text-cyan"></i>
+        <h3 class="glass-title" style="font-size:.9rem">ตัวอย่างรายงาน · Report Preview</h3>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap justify-end">
+        <div class="flex items-center gap-1 mr-1" title="ธีมรายงาน" style="background:var(--input-bg); border:1px solid var(--glass-border); border-radius:10px; padding:3px;">
+          <button id="rt-dark"  onclick="setReportTheme('dark')"  class="icon-btn" title="ธีมมืด"><i class="fa-solid fa-moon"></i></button>
+          <button id="rt-light" onclick="setReportTheme('light')" class="icon-btn" title="ธีมสว่าง"><i class="fa-solid fa-sun"></i></button>
+          <button id="rt-green" onclick="setReportTheme('green')" class="icon-btn" title="ธีมเขียว"><i class="fa-solid fa-leaf"></i></button>
+        </div>
+        <button id="btn-dl-png" onclick="exportPNG()" class="btn btn-warn" style="padding:9px 14px" title="ดาวน์โหลดเป็นรูปภาพ PNG (แยกไฟล์ตามหน้า ครบเหมือน PDF)"><i class="fa-solid fa-image"></i> PNG</button>
+        <button id="btn-dl-pdf" onclick="exportPDF()" class="btn btn-cyan" style="padding:9px 14px" title="ดาวน์โหลดเป็นเอกสาร PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+        <button onclick="closeReportModal()" class="icon-btn" title="ปิด"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div id="report-preview-scroll" style="overflow:auto; padding:18px; background:rgba(0,0,0,0.25);">
+      <div id="report-preview-holder" style="margin:0 auto;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="workorder-render" style="position:fixed; left:-99999px; top:0; width:794px; background:#ffffff;"></div>
+
+<!-- ============================================================= -->
+<!-- APPLICATION SCRIPT                                            -->
+<!-- ============================================================= -->
+<script>
+"use strict";
+
+/* =================================================================
+ *  CONFIG — วาง Web App URL ของ Google Apps Script ที่นี่
+ *  เว้นว่าง = โหมด DEMO (ข้อมูลตัวอย่างในหน่วยความจำ)
+ * ================================================================= */
+const CONFIG = {
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyVtbxIGq4hsN2KGP1ij04tWFKHmTncUrtOkk8LaaM-Kdq0U6UnA0-V3R8Jh9aSeQEt/exec",
+  FETCH_TIMEOUT_MS: 15000,   // กัน request ค้าง
+};
+
+const FLOORS = [
+  "รอบอาคาร", "ชั้น B", "ชั้น Bครึ่ง", "ชั้น 1", "ชั้น 1ครึ่ง",
+  "ชั้น 2", "ชั้น 2ครึ่ง", "ชั้น 3", "ชั้น 3ครึ่ง",
+  "ชั้น 4", "ชั้น 4ครึ่ง", "ชั้น 5", "ชั้นดาดฟ้า"
+];
+
+/* ประเภทเหตุการณ์ / อาการ */
+const CATEGORIES = [
+  "ลื่นล้ม (พื้นเปียก/จุดเสี่ยง)",
+  "หกล้ม (ทางต่างระดับ/สิ่งกีดขวาง)",
+  "หน้ามืด (เป็นลม/เวียนศีรษะ/ลมชัก)",
+  "สะดุดล้ม (ทางต่างระดับ/สิ่งกีดขวาง)",
+  "ถูกของแข็งกระแทก/หนีบ (ประตู/ลิฟต์)",
+  "ชักเกร็ง/โรคประจำตัวกำเริบ",
+  "เจ็บป่วยกะทันหัน (อาเจียน/ท้องเสีย)",
+  "พลัดตกจากที่สูง (บันได/บันไดเลื่อน)",
+  "ทะเลาะวิวาท",
+  "น้ำรั่วซึม/ท่อแตก",
+  "ไฟไหม้/กลุ่มควัน",
+  "สิ่งของติดบันไดเลื่อน/รองเท้า",
+  "กระแสไฟฟ้าขัดข้อง/ลิฟต์ค้าง",
+  "กลิ่นผิดปกติ (ก๊าซ/สารเคมี)"
+];
+
+const ZONES = [
+  "ลานกลม", "Hall A", "ลานกลาง (SBK Hall)", "Hall B", "ลานซีซั่น",
+  "IT", "แฟชั่น", "ธนาคาร", "สตรีทกรูเม่ร์", "ติวเตอร์", "ฟู๊ดมาเช่ร์"
+];
+
+/* ---- STATE ---- */
+let incidents  = [];
+let floorChartBar = null;   // กราฟแท่ง
+let floorChartPie = null;   // กราฟวงกลม
+let _idCounter = 0;     // ตัวสร้าง id ที่ stable สำหรับแต่ละ record
+let isBusy     = false; // กันกดซ้ำระหว่างทำงาน async
+let isLoading  = false; // กันดึงข้อมูลซ้อน
+let lastUpdated = null; // เวลาอัปเดตล่าสุด
+let autoTimer  = null;  // ตัวจับเวลา auto-refresh
+let autoMinutes = 0;    // 0 = ปิด
+
+/* ตัวกรองช่วงเวลารายงาน
+ * mode: 'all' | 'week' | 'range'
+ * fromKey/toKey: เลขเปรียบเทียบ yyyymmdd (null = ไม่จำกัด) */
+let dateFilter = { mode: "all", weekOffset: 0, fromKey: null, toKey: null };
+
+/* =================================================================
+ *  SAFE DOM HELPER
+ * ================================================================= */
+function $(id) { return document.getElementById(id); }
+
+/* =================================================================
+ *  LIBRARY AVAILABILITY GUARDS  (กัน CDN โหลดไม่สำเร็จ)
+ * ================================================================= */
+function libReady(name) {
+  switch (name) {
+    case "chart":       return typeof window.Chart !== "undefined";
+    case "html2canvas": return typeof window.html2canvas !== "undefined";
+    case "jspdf":       return !!(window.jspdf && window.jspdf.jsPDF);
+    default:            return false;
+  }
+}
+
+/* =================================================================
+ *  UTILITIES
+ * ================================================================= */
+function pad(n) { return String(n).padStart(2, "0"); }
+
+function formatDateDDMMYYYY(d) {
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+
+/* แปลง input[type=date] "YYYY-MM-DD" -> "DD/MM/YYYY" (ตรวจความถูกต้อง) */
+function isoToDDMMYYYY(iso) {
+  if (!iso || typeof iso !== "string") return "";
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return "";
+  return `${m[3]}/${m[2]}/${m[1]}`;
+}
+
+/* normalize วันที่ทุกรูปแบบให้เป็น DD/MM/YYYY (เติม 0 ข้างหน้า) เพื่อเทียบกันได้แม่นยำ */
+function normalizeDate(str) {
+  if (!str) return "";
+  const s = String(str).trim();
+  // ISO เช่น 2026-06-11 หรือ 2026-06-11T00:00:00
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return isoToDDMMYYYY(s.slice(0, 10));
+  // DD/MM/YYYY (รูปแบบหลักของระบบ)
+  const parts = s.split("/");
+  if (parts.length === 3 && /^\d+$/.test(parts[0]) && /^\d+$/.test(parts[1]) && /^\d+$/.test(parts[2])) {
+    return `${pad(parts[0])}/${pad(parts[1])}/${parts[2]}`;
+  }
+  // JS Date toString เช่น "Thu Jun 11 2026 00:00:00 GMT+0700 (เวลาอินโดจีน)"
+  // ดึงเดือน-วัน-ปี จาก token ภาษาอังกฤษ (คงที่แม้ locale ไทย) เพื่อเลี่ยงปัญหา timezone
+  const MON = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
+  const m = s.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2})\s+(\d{4})\b/);
+  if (m) return `${pad(m[2])}/${pad(MON[m[1]])}/${m[3]}`;
+  // เผื่อรูปแบบอื่นที่ Date พาร์สได้
+  const t = Date.parse(s);
+  if (!isNaN(t)) { const d = new Date(t); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`; }
+  return s;
+}
+
+/* "DD/MM/YYYY" -> เลขเปรียบเทียบ yyyymmdd (null ถ้าพาร์สไม่ได้) */
+function dateKey(str) {
+  const s = normalizeDate(str);
+  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  return parseInt(m[3], 10) * 10000 + parseInt(m[2], 10) * 100 + parseInt(m[1], 10);
+}
+/* Date object -> yyyymmdd */
+function dateKeyFromDate(d) { return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); }
+/* yyyymmdd -> "DD/MM/YYYY" (พ.ศ.? ใช้ ค.ศ. ตามระบบ) */
+function keyToLabel(k) { const y = Math.floor(k / 10000), m = Math.floor((k % 10000) / 100), d = k % 100; return `${pad(d)}/${pad(m)}/${y}`; }
+
+/* วันจันทร์ของสัปดาห์ที่อ้างอิงจาก today + offset สัปดาห์ */
+function mondayOf(offsetWeeks) {
+  const now = new Date();
+  const day = now.getDay();              // 0=Sun..6=Sat
+  const back = (day + 6) % 7;            // ระยะถอยหลังถึงวันจันทร์
+  const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - back + offsetWeeks * 7);
+  return mon;
+}
+
+/* คืนรายการเหตุการณ์ที่อยู่ในช่วงเวลาที่เลือก */
+function activeIncidents() {
+  if (dateFilter.mode === "all") return incidents.slice();
+  const f = dateFilter.fromKey, t = dateFilter.toKey;
+  if (f == null && t == null) return incidents.slice();   // ไม่ได้กำหนดช่วง = แสดงทั้งหมด
+  return incidents.filter(i => {
+    const k = dateKey(i.date);
+    if (k == null) return false;
+    if (f != null && k < f) return false;                 // ก่อนวันเริ่ม
+    if (t != null && k > t) return false;                 // หลังวันสิ้นสุด
+    return true;
+  });
+}
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/* อ่านค่า CSS variable ของธีมปัจจุบัน (สำหรับ Chart / Export) */
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function showToast(message, type = "info") {
+  const icons = { success: "fa-circle-check", error: "fa-circle-exclamation", info: "fa-circle-info" };
+  const wrap = $("toast-wrap");
+  if (!wrap) return;
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.setAttribute("role", "status");
+  el.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i><span>${escapeHtml(message)}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = "opacity .3s, transform .3s";
+    el.style.opacity = "0"; el.style.transform = "translateX(40px)";
+    setTimeout(() => el.remove(), 300);
+  }, 3200);
+}
+
+/* เปิด/ปิดสถานะ busy ของปุ่ม (กันกดซ้ำ + UX) */
+function setBusy(buttonId, busy, busyLabel) {
+  isBusy = busy;
+  const btn = buttonId ? $(buttonId) : null;
+  if (!btn) return;
+  if (busy) {
+    btn.dataset.html = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${escapeHtml(busyLabel || "กำลังทำงาน…")}`;
+  } else {
+    btn.disabled = false;
+    if (btn.dataset.html) btn.innerHTML = btn.dataset.html;
+  }
+}
+
+/* =================================================================
+ *  THEME (DARK / LIGHT)
+ * ================================================================= */
+function applyTheme(theme) {
+  const t = theme === "light" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  const icon = $("theme-icon");
+  if (icon) icon.className = t === "light" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+  // เก็บค่าไว้ (กันพังในสภาพแวดล้อมที่บล็อก storage)
+  try { localStorage.setItem("iacc-theme", t); } catch (e) { /* ignore */ }
+  // กราฟต้อง re-render เพื่อให้สีเส้น/พื้นหลังตรงธีม
+  if (floorChartBar || floorChartPie) renderChart();
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute("data-theme");
+  applyTheme(cur === "light" ? "dark" : "light");
+}
+function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem("iacc-theme"); } catch (e) { /* ignore */ }
+  if (!saved && window.matchMedia) {
+    saved = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  }
+  applyTheme(saved || "dark");
+}
+
+/* =================================================================
+ *  PRESENTATION MODE — โหมดนำเสนอเต็มจอ (ขึ้นจอ Command Center)
+ * ================================================================= */
+function togglePresentation() {
+  const on = !document.body.classList.contains("presenting");
+  document.body.classList.toggle("presenting", on);
+  if (on) {
+    try { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); } catch (e) { /* บางเบราว์เซอร์ปฏิเสธ */ }
+  } else {
+    try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen(); } catch (e) {}
+  }
+  // กราฟต้องวาดใหม่ให้พอดีขนาดที่เปลี่ยน
+  setTimeout(() => { try { if (typeof renderChart === "function") renderChart(); } catch (e) {} }, 260);
+}
+// ออกจากโหมดนำเสนอเมื่อกด Esc / ออกจาก fullscreen
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement && document.body.classList.contains("presenting")) {
+    document.body.classList.remove("presenting");
+    setTimeout(() => { try { if (typeof renderChart === "function") renderChart(); } catch (e) {} }, 260);
+  }
+});
+
+/* =================================================================
+ *  REAL-TIME CLOCK
+ * ================================================================= */
+function startClock() {
+  const tick = () => {
+    const now = new Date();
+    const t = $("clock-time"), d = $("clock-date");
+    if (t) t.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    if (d) d.textContent = formatDateDDMMYYYY(now);
+  };
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* =================================================================
+ *  CONNECTION STATUS
+ * ================================================================= */
+function setStatus(state) {
+  const dot = $("status-dot"), txt = $("status-text");
+  if (!dot || !txt) return;
+  dot.className = "status-dot " + state;
+  const map = {
+    online:  ["CONNECTED",   "var(--success)"],
+    offline: ["DEMO MODE",   "var(--warning)"],
+    error:   ["DISCONNECTED","var(--emergency)"],
+    loading: ["CONNECTING…", "var(--warning)"],
+  };
+  const [label, color] = map[state] || map.loading;
+  txt.textContent = label; txt.style.color = color;
+}
+
+/* =================================================================
+ *  DATA NORMALIZATION — แปลง record ดิบให้อยู่ในรูปแบบมาตรฐานเสมอ
+ *  (กันข้อมูลเพี้ยน / field หาย / type ผิดจาก Sheet)
+ * ================================================================= */
+/* เติมคำว่า "ชั้น " นำหน้าให้อัตโนมัติ เมื่อข้อมูลใน Sheet เก็บเป็นแค่
+ * ตัวเลข/ตัวอักษร (เช่น "2", "3", "B", "2ครึ่ง") เพื่อให้แสดงผลและกรองตรงกัน */
+/* แปลงเวลาทุกรูปแบบให้เป็น "HH:MM"
+ * รองรับ "12:50", "11.30 น.", "9.5", "16" ฯลฯ */
+function normalizeTime(v) {
+  const s = String(v == null ? "" : v).trim();
+  if (!s) return "";
+  let m = s.match(/(\d{1,2})\s*[:.\uFF1A]\s*(\d{1,2})/);   // HH:MM หรือ HH.MM
+  if (m) {
+    const h = Math.min(23, Math.max(0, parseInt(m[1], 10)));
+    const mm = Math.min(59, Math.max(0, parseInt(m[2], 10)));
+    return pad(h) + ":" + pad(mm);
+  }
+  m = s.match(/^(\d{1,2})\b/);                              // ชั่วโมงล้วน
+  if (m) { const h = Math.min(23, Math.max(0, parseInt(m[1], 10))); return pad(h) + ":00"; }
+  return s; // คงค่าเดิมถ้าแปลกมาก
+}
+
+/* ดึงเลขชั่วโมง (0–23) จากค่าเวลา — รองรับทุกรูปแบบ */
+function parseHour(v) {
+  const t = normalizeTime(v);
+  const m = t.match(/^(\d{1,2}):/);
+  if (!m) return null;
+  const h = parseInt(m[1], 10);
+  return (h >= 0 && h <= 23) ? h : null;
+}
+
+function normalizeFloor(v) {
+  let s = String(v == null ? "" : v).trim();
+  if (!s || s === "—") return s;
+  // ค่าที่เป็นรูปแบบมาตรฐานอยู่แล้ว — คงเดิม
+  if (s.indexOf("ชั้น") === 0 || s === "รอบอาคาร") return s;
+  // เลขล้วน / เลข+ครึ่ง / B / Bครึ่ง → เติม "ชั้น " (ให้ตรงกับรายการใน FLOORS)
+  if (/^([Bb]|\d+)\s*(ครึ่ง)?$/.test(s)) {
+    return ("ชั้น " + s.replace(/\s+/g, "").replace(/^b/, "B"));
+  }
+  // "ดาดฟ้า" → "ชั้นดาดฟ้า"
+  if (s === "ดาดฟ้า") return "ชั้นดาดฟ้า";
+  return s;
+}
+
+function normalizeRecord(raw) {
+  raw = raw || {};
+  return {
+    _id:         ++_idCounter,
+    date:        normalizeDate(raw.date),
+    time:        normalizeTime(raw.time),
+    floor:       normalizeFloor(raw.floor) || "—",
+    floorDetail: String(raw.floorDetail ?? "").trim() || "—",
+    photos: String(raw.photos ?? "").trim(),
+    location:    String(raw.location ?? "").trim() || "—",
+    description: String(raw.description ?? "").trim() || "—",
+    category:    String(raw.category ?? "").trim() || "ไม่ระบุ",
+  };
+}
+
+/* =================================================================
+ *  DATA LAYER — GET
+ * ================================================================= */
+function buildDemoData() {
+  const today = formatDateDDMMYYYY(new Date());
+  return [
+    { date: today,        time: "09:14", floor: "ชั้น 2",     floorDetail: "โซน A",        location: "หน้าลิฟต์โดยสาร #3",        description: "ลูกค้าลื่นล้มบริเวณพื้นเปียก ไม่มีผู้บาดเจ็บสาหัส แจ้งแม่บ้านทำความสะอาดทันที" },
+    { date: today,        time: "13:42", floor: "ชั้น B",     floorDetail: "ลานจอดรถ",     location: "ช่องจอด B-218 กล้อง CAM-12", description: "รถยนต์เฉี่ยวชนเสา เจ้าของรถแจ้งประกัน รปภ.บันทึกภาพไว้เรียบร้อย" },
+    { date: "12/05/2026", time: "18:05", floor: "ชั้น 1",     floorDetail: "ทางเข้าหลัก",  location: "ประตูหมุนฝั่งทิศเหนือ",      description: "ประตูอัตโนมัติขัดข้อง ปิดกระแทกผู้ใช้บริการ ช่างซ่อมบำรุงเข้าแก้ไข" },
+    { date: "12/05/2026", time: "20:33", floor: "ชั้นดาดฟ้า", floorDetail: "สวนหย่อม",     location: "บริเวณราวกันตก โซนตะวันตก",  description: "ตรวจพบราวกันตกชำรุด ปิดกั้นพื้นที่และแจ้งทีมโครงสร้างประเมิน" },
+    { date: "11/05/2026", time: "11:20", floor: "ชั้น 2",     floorDetail: "ศูนย์อาหาร",   location: "หน้าร้านอาหาร Unit 204",     description: "เกิดควันจากเตาประกอบอาหาร สัญญาณเตือนไฟทำงาน อพยพชั่วคราว ไม่มีเพลิงไหม้" },
+    { date: "10/05/2026", time: "15:58", floor: "ชั้น 3",     floorDetail: "—",            location: "บันไดเลื่อนขาขึ้น ESC-07",   description: "บันไดเลื่อนหยุดกะทันหันขณะใช้งาน ผู้โดยสารตกใจเล็กน้อย หยุดเครื่องเพื่อตรวจสอบ" }
+  ];
+}
+
+/* เปิด endpoint ในแท็บใหม่เพื่อตรวจสอบ deployment ด้วยตา
+ * ผลที่ควรเห็น: __iaccTest({...JSON...})  → แปลว่า JSONP ทำงาน
+ * ถ้าเห็นหน้า login / error / JSON เปล่าๆ → ยังไม่ได้ deploy ใหม่ หรือสิทธิ์ไม่ใช่ Anyone */
+function testConnection() {
+  if (!CONFIG.SCRIPT_URL) { showToast("ยังไม่ได้ตั้งค่า SCRIPT_URL (โหมด DEMO)", "info"); return; }
+  const url = CONFIG.SCRIPT_URL + (CONFIG.SCRIPT_URL.indexOf("?") >= 0 ? "&" : "?") + "action=read&callback=__iaccTest&t=" + Date.now();
+  showToast("เปิดแท็บทดสอบ — ควรเห็นข้อความขึ้นต้นด้วย __iaccTest(", "info");
+  window.open(url, "_blank", "noopener");
+}
+
+/* =================================================================
+ *  DATA LAYER — GET ผ่าน JSONP (เลี่ยง CORS โดยสิ้นเชิง)
+ *  โหลดผ่าน <script> tag → ใช้ได้กับ Google Apps Script จากไฟล์ HTML ตรงๆ
+ * ================================================================= */
+function jsonpGet(params) {
+  return new Promise((resolve, reject) => {
+    const cb = "__iaccCb_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
+    const script = document.createElement("script");
+    let done = false;
+    const cleanup = () => {
+      // กัน script ที่มาช้า (หลัง timeout) เรียก callback ที่ถูกลบไปแล้ว → TypeError
+      window[cb] = function () {};
+      setTimeout(() => { try { delete window[cb]; } catch (e) { window[cb] = undefined; } }, 5000);
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
+    const timer = setTimeout(() => {
+      if (done) return; done = true; cleanup();
+      const e = new Error("หมดเวลาเชื่อมต่อ (timeout)"); e.name = "AbortError"; reject(e);
+    }, CONFIG.FETCH_TIMEOUT_MS);
+
+    window[cb] = (data) => { if (done) return; done = true; clearTimeout(timer); cleanup(); resolve(data); };
+    script.onerror = () => {
+      if (done) return; done = true; clearTimeout(timer); cleanup();
+      reject(new Error("โหลดข้อมูลไม่สำเร็จ (ตรวจสอบ URL / การ Deploy / สิทธิ์ Anyone)"));
+    };
+
+    const qs = new URLSearchParams(Object.assign({}, params, { callback: cb, t: Date.now() })).toString();
+    script.src = CONFIG.SCRIPT_URL + (CONFIG.SCRIPT_URL.indexOf("?") >= 0 ? "&" : "?") + qs;
+    document.head.appendChild(script);
+  });
+}
+
+/* GET ปกติ (fallback) — เผื่อกรณี deployment ส่ง CORS header มาให้ */
+function fetchGet(params) {
+  const qs = new URLSearchParams(Object.assign({}, params, { t: Date.now() })).toString();
+  const url = CONFIG.SCRIPT_URL + (CONFIG.SCRIPT_URL.indexOf("?") >= 0 ? "&" : "?") + qs;
+  const timeout = new Promise((_, reject) => setTimeout(() => {
+    const e = new Error("หมดเวลาเชื่อมต่อ"); e.name = "AbortError"; reject(e);
+  }, CONFIG.FETCH_TIMEOUT_MS));
+  return Promise.race([
+    fetch(url, { method: "GET", redirect: "follow" }).then(r => {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }),
+    timeout,
+  ]);
+}
+
+async function loadData(silent = false) {
+  if (isLoading) return;          // กันดึงซ้อน (เช่น auto-refresh ชนกับกดเอง)
+  isLoading = true;
+  setStatus("loading");
+
+  try {
+    if (!CONFIG.SCRIPT_URL) {
+      incidents = buildDemoData().map(normalizeRecord);
+      setStatus("offline");
+      renderAll();
+      if (!silent) showToast("โหมด DEMO — แสดงข้อมูลตัวอย่าง (ยังไม่ได้เชื่อม Google Sheets)", "info");
+      return;
+    }
+
+    let json = null, lastErr = null;
+    // 1) ลอง JSONP ก่อน (เลี่ยง CORS)
+    try { json = await jsonpGet({ action: "read" }); }
+    catch (e1) {
+      lastErr = e1; console.info("ℹ️ JSONP ใช้ไม่ได้ กำลังลองวิธี fetch แทน (ปกติ ไม่ใช่ข้อผิดพลาด)");
+      // 2) fallback: fetch ปกติ
+      try { json = await fetchGet({ action: "read" }); }
+      catch (e2) { lastErr = e2; console.info("ℹ️ fetch ก็ใช้ไม่ได้ — จะแสดงสถานะการเชื่อมต่อให้ผู้ใช้ทราบ"); }
+    }
+
+    try {
+      if (json && json.status === "success" && Array.isArray(json.data)) {
+        incidents = json.data.map(normalizeRecord);
+        setStatus("online");
+        markUpdated();
+        renderAll();
+        if (!silent) showToast(`โหลดข้อมูลสำเร็จ (${incidents.length} รายการ)`, "success");
+        return;
+      }
+      throw lastErr || new Error((json && json.message) || "รูปแบบข้อมูลไม่ถูกต้อง");
+    } catch (err) {
+      console.error("loadData:", err);
+      setStatus(incidents.length ? "error" : "offline");
+      if (incidents.length === 0) incidents = buildDemoData().map(normalizeRecord);
+      renderAll();
+      const msg = err.name === "AbortError"
+        ? "หมดเวลาเชื่อมต่อ (timeout)"
+        : /Failed to fetch|NetworkError|load failed|โหลดข้อมูลไม่สำเร็จ/i.test(err.message)
+          ? "เชื่อมต่อไม่ได้ — ตรวจว่า Deploy เวอร์ชันใหม่แล้ว + สิทธิ์ Anyone (หรือกำลังรันในพรีวิว)"
+          : err.message;
+      if (!silent) showToast("เชื่อมต่อไม่สำเร็จ — ใช้ข้อมูลสำรองแทน (" + msg + ")", "error");
+    }
+  } finally {
+    isLoading = false;
+  }
+}
+
+/* บันทึก/แสดงเวลาอัปเดตล่าสุด */
+function markUpdated() {
+  lastUpdated = new Date();
+  const el = $("last-updated");
+  if (el) el.textContent = "อัปเดตล่าสุด " + pad(lastUpdated.getHours()) + ":" + pad(lastUpdated.getMinutes()) + ":" + pad(lastUpdated.getSeconds());
+}
+
+/* =================================================================
+ *  AUTO-REFRESH — ดึงข้อมูลอัตโนมัติทุก N นาที
+ * ================================================================= */
+function setAutoRefresh(minutes) {
+  autoMinutes = parseInt(minutes, 10) || 0;
+  try { localStorage.setItem("iacc-auto-min", String(autoMinutes)); } catch (e) {}
+
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+
+  const sel = $("auto-refresh");
+  if (sel) sel.value = String(autoMinutes);
+
+  if (autoMinutes > 0) {
+    autoTimer = setInterval(() => {
+      if (document.hidden) return;   // ไม่ดึงตอนสลับแท็บออก (ประหยัด)
+      if (isBusy || isLoading) return;
+      loadData(true);                // silent — ไม่เด้ง toast ทุกครั้ง
+    }, autoMinutes * 60 * 1000);
+    showToast(`เปิดอัปเดตอัตโนมัติทุก ${autoMinutes} นาที`, "success");
+    loadData(true);                  // ดึงทันทีหนึ่งครั้งเมื่อเปิด
+  } else {
+    showToast("ปิดอัปเดตอัตโนมัติ (อัปเดตเองด้วยปุ่มรีเฟรช)", "info");
+  }
+}
+
+/* =================================================================
+ *  DATA LAYER — POST ผ่าน no-cors (fire-and-forget)
+ *  ส่งข้อมูลแบบไม่อ่าน response (opaque) เพื่อเลี่ยง CORS preflight
+ *  แล้วผู้เรียกจะ reload ด้วย JSONP เพื่อยืนยันผลอีกที
+ * ================================================================= */
+async function sendToSheet(record) {
+  if (!CONFIG.SCRIPT_URL) return { status: "success", demo: true };
+  const timeout = new Promise((_, reject) => setTimeout(() => {
+    const e = new Error("หมดเวลาเชื่อมต่อ"); e.name = "AbortError"; reject(e);
+  }, CONFIG.FETCH_TIMEOUT_MS));
+  await Promise.race([
+    fetch(CONFIG.SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "create", ...record }),
+    }),
+    timeout,
+  ]);
+  // response เป็น opaque อ่านไม่ได้ → ถือว่าส่งสำเร็จ แล้วให้ caller reload ยืนยัน
+  return { status: "success", opaque: true };
+}
+
+/* =================================================================
+ *  FORM : VALIDATION + SUBMIT
+ * ================================================================= */
+function markInvalid(el, bad) { if (el) el.classList.toggle("invalid", bad); }
+
+function validateForm() {
+  const fields = [
+    ["f-date", $("f-date").value],
+    ["f-time", $("f-time").value],
+    ["f-floor", $("f-floor").value],
+    ["f-category", $("f-category").value],
+    ["f-location", $("f-location").value.trim()],
+    ["f-desc", $("f-desc").value.trim()],
+  ];
+  let ok = true;
+  fields.forEach(([id, val]) => { const bad = !val; markInvalid($(id), bad); if (bad) ok = false; });
+
+  // ตรวจ logic เพิ่มเติม: ชั้นต้องอยู่ในรายการที่กำหนด
+  const floor = $("f-floor").value;
+  if (floor && !FLOORS.includes(floor)) { markInvalid($("f-floor"), true); ok = false; }
+
+  if (!ok) showToast("กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * ให้ครบถ้วนและถูกต้อง", "error");
+  return ok;
+}
+
+function readForm() {
+  return normalizeRecord({
+    date:        isoToDDMMYYYY($("f-date").value),
+    time:        $("f-time").value,
+    floor:       $("f-floor").value,
+    category:    $("f-category").value,
+    floorDetail: $("f-floordetail").value.trim() || "—",
+    location:    $("f-location").value.trim(),
+    description: $("f-desc").value.trim(),
+  });
+}
+
+function clearForm() {
+  ["f-date", "f-time", "f-floor", "f-category", "f-floordetail", "f-location", "f-desc"].forEach(id => {
+    const el = $(id); if (el) { el.value = ""; el.classList.remove("invalid"); }
+  });
+  prefillToday();
+}
+
+/* ซ่อน/แสดง ฟอร์มบันทึกเหตุการณ์ */
+function toggleForm() {
+  const body = $("form-body"), icon = $("form-toggle-icon"), label = $("form-toggle-label"), btn = $("form-toggle");
+  if (!body) return;
+  const open = body.classList.toggle("open");
+  if (icon) icon.style.transform = open ? "rotate(0deg)" : "rotate(180deg)";
+  if (label) label.textContent = open ? "ซ่อน" : "แสดง";
+  if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+async function submitForm() {
+  if (isBusy) return;
+  if (!validateForm()) return;
+  const record = readForm();
+
+  setBusy("btn-submit", true, "กำลังบันทึก…");
+  try {
+    const result = await sendToSheet(record);
+    if (!result || result.status !== "success") {
+      throw new Error((result && result.message) || "บันทึกไม่สำเร็จ");
+    }
+
+    if (result.demo) {
+      incidents.unshift(record);
+      renderAll();
+      showToast("บันทึกสำเร็จ (โหมด DEMO)", "success");
+      clearForm();
+      return;
+    }
+
+    // POST แบบ no-cors อ่านผลไม่ได้ → รอให้ Sheet บันทึก แล้วดึงมา "ยืนยัน" ว่ามีจริง
+    showToast("ส่งข้อมูลแล้ว — กำลังตรวจสอบกับ Google Sheets…", "info");
+    await new Promise(r => setTimeout(r, 1300));
+    await loadData();
+
+    const saved = incidents.some(i =>
+      i.date === record.date && i.time === record.time && i.floor === record.floor &&
+      i.location === record.location && i.description === record.description);
+
+    if (saved) {
+      showToast("บันทึกลง Google Sheets สำเร็จ", "success");
+      clearForm();
+    } else {
+      // ไม่ล้างฟอร์ม เพื่อให้ผู้ใช้ลองส่งซ้ำได้
+      showToast("ส่งแล้วแต่ยังไม่พบข้อมูลใน Sheet — ตรวจการ Deploy/สิทธิ์ Anyone แล้วลองใหม่ (ข้อมูลในฟอร์มยังอยู่)", "error");
+    }
+  } catch (err) {
+    console.error("submitForm:", err);
+    const msg = err.name === "AbortError" ? "หมดเวลาเชื่อมต่อ" : err.message;
+    showToast("เกิดข้อผิดพลาดในการบันทึก: " + msg, "error");
+  } finally {
+    setBusy("btn-submit", false);
+  }
+}
+
+/* =================================================================
+ *  DATE RANGE CONTROLS
+ * ================================================================= */
+function setRangeMode(mode) {
+  dateFilter.mode = mode;
+  // ปรับสไตล์ปุ่มโหมด
+  [["rmode-all", "all"], ["rmode-week", "week"], ["rmode-range", "range"]].forEach(([id, m]) => {
+    const b = $(id); if (b) b.className = "btn " + (m === mode ? "btn-cyan" : "btn-ghost"); if (b) b.style.padding = "8px 14px";
+  });
+  $("week-nav").style.display = mode === "week" ? "flex" : "none";
+  $("range-pick").style.display = mode === "range" ? "flex" : "none";
+
+  if (mode === "all") {
+    dateFilter.fromKey = dateFilter.toKey = null;
+  } else if (mode === "week") {
+    applyWeek();
+  } else if (mode === "range") {
+    // ตั้งค่าเริ่มต้นช่วง = สัปดาห์นี้ ถ้ายังไม่ได้เลือก
+    if (!$("range-from").value || !$("range-to").value) {
+      const mon = mondayOf(0), sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
+      $("range-from").value = isoOf(mon);
+      $("range-to").value = isoOf(sun);
+    }
+    applyCustomRange();
+  }
+  updateRangeSummary();
+  renderAll();
+}
+
+function isoOf(d) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+
+function applyWeek() {
+  const mon = mondayOf(dateFilter.weekOffset);
+  const sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
+  dateFilter.fromKey = dateKeyFromDate(mon);
+  dateFilter.toKey = dateKeyFromDate(sun);
+  const lbl = $("week-label");
+  if (lbl) lbl.textContent = `${keyToLabel(dateFilter.fromKey)} – ${keyToLabel(dateFilter.toKey)}`;
+}
+
+function shiftWeek(delta) {
+  dateFilter.weekOffset += delta;
+  applyWeek(); updateRangeSummary(); renderAll();
+}
+function thisWeek() {
+  dateFilter.weekOffset = 0;
+  applyWeek(); updateRangeSummary(); renderAll();
+}
+
+function applyCustomRange() {
+  const fromEl = $("range-from"), toEl = $("range-to");
+  let fromV = fromEl.value, toV = toEl.value;
+  // ถ้ากรอกทั้งคู่แต่สลับกัน → สลับให้ถูกทั้งค่าและช่องที่แสดง
+  if (fromV && toV && fromV > toV) {
+    const x = fromV; fromV = toV; toV = x;
+    fromEl.value = fromV; toEl.value = toV;
+  }
+  dateFilter.fromKey = fromV ? dateKey(isoToDDMMYYYY(fromV)) : null;
+  dateFilter.toKey   = toV   ? dateKey(isoToDDMMYYYY(toV))   : null;
+  updateRangeSummary(); renderAll();
+}
+
+function rangeLabel() {
+  const f = dateFilter.fromKey, t = dateFilter.toKey;
+  if (f != null && t != null) return `${keyToLabel(f)} – ${keyToLabel(t)}`;
+  if (f != null) return `ตั้งแต่ ${keyToLabel(f)}`;
+  if (t != null) return `ถึง ${keyToLabel(t)}`;
+  return "";
+}
+
+function updateRangeSummary() {
+  const el = $("range-summary"); if (!el) return;
+  if (dateFilter.mode === "all" || (dateFilter.fromKey == null && dateFilter.toKey == null)) {
+    el.textContent = "แสดงทั้งหมด"; return;
+  }
+  el.textContent = `${rangeLabel()} · ${activeIncidents().length} รายการ`;
+}
+
+/* ข้อความช่วงเวลาสำหรับหัวรายงาน */
+function rangeText() {
+  if (dateFilter.mode === "all" || (dateFilter.fromKey == null && dateFilter.toKey == null)) return "ทั้งหมด (All time)";
+  return rangeLabel();
+}
+
+/* =================================================================
+ *  RENDER : MASTER
+ * ================================================================= */
+function renderAll() {
+  // แยก try/catch แต่ละส่วน เพื่อให้ส่วนที่เหลือยังแสดงได้แม้ส่วนหนึ่งพลาด
+  const safe = (label, fn) => { try { fn(); } catch (err) { console.error(label + ":", err); } };
+  safe("updateRangeSummary", updateRangeSummary);
+  safe("renderStats", renderStats);
+  safe("renderChart", renderChart);
+  safe("renderCategoryStats", renderCategoryStats);
+  safe("renderTable", renderTable);
+}
+
+/* แผงสถิติแยกตามอาการ/ประเภท (ข้าง ๆ กราฟ Pie) */
+function renderCategoryStats() {
+  const box = $("cat-stats");
+  if (!box) return;
+  const a = computeAnalytics();
+  const ranks = a.categoryRank;
+  if (!ranks.length) {
+    box.innerHTML = `<div class="text-dim text-sm" style="font-style:italic; padding:18px 4px">ยังไม่มีข้อมูลประเภทเหตุการณ์</div>`;
+    return;
+  }
+  const maxPct = ranks[0].pct || 1;
+  const palette = ["#22e6ff", "#ff5cc8", "#ffb02e", "#2effb0", "#9d6bff", "#ff3b6b",
+                   "#4d8bff", "#ffd23f", "#19c6c6", "#f06292", "#5ce1ff", "#b388ff", "#ff8a5c", "#7affb0"];
+  box.innerHTML = ranks.map((r, idx) => {
+    const color = palette[idx % palette.length];
+    const w = Math.max(6, Math.round(r.pct / maxPct * 100));
+    return `
+      <div style="margin-bottom:11px;">
+        <div style="display:flex; justify-content:space-between; gap:8px; font-size:12px; margin-bottom:4px;">
+          <span style="color:var(--text); line-height:1.3;">${escapeHtml(r.category)}</span>
+          <span style="color:var(--text-dim); white-space:nowrap;"><b style="color:${color};">${r.count}</b> · ${r.pct}%</span>
+        </div>
+        <div style="height:9px; background:rgba(127,140,200,0.12); border-radius:99px; overflow:hidden;">
+          <div style="height:100%; width:${w}%; border-radius:99px; background:linear-gradient(90deg,${color},${color}aa);"></div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function computeStats() {
+  const rows = activeIncidents();
+  const today = formatDateDDMMYYYY(new Date());
+  const total = rows.length;
+  const todayCount = rows.filter(i => i.date === today).length;
+  const counts = {};
+  rows.forEach(i => { if (i.floor && i.floor !== "—") counts[i.floor] = (counts[i.floor] || 0) + 1; });
+  let topFloor = "—", topCount = 0;
+  Object.entries(counts).forEach(([f, c]) => { if (c > topCount) { topCount = c; topFloor = f; } });
+  // ประเภท/อาการที่เกิดบ่อยที่สุด
+  const catCounts = {};
+  rows.forEach(i => { const c = i.category && i.category !== "—" ? i.category : null; if (c) catCounts[c] = (catCounts[c] || 0) + 1; });
+  let topCat = "—", topCatCount = 0;
+  Object.entries(catCounts).forEach(([c, n]) => { if (n > topCatCount) { topCatCount = n; topCat = c; } });
+  return { total, todayCount, topFloor, topCount, topCat, topCatCount };
+}
+
+function renderStats() {
+  const s = computeStats();
+  $("stat-total").textContent = s.total;
+  $("stat-today").textContent = s.todayCount;
+  $("stat-topfloor").textContent = s.topFloor;
+  $("stat-topfloor-count").textContent = s.topCount;
+  const tc = $("stat-topcat"); if (tc) tc.textContent = s.topCat;
+  const tcc = $("stat-topcat-count"); if (tcc) tcc.textContent = s.topCatCount;
+  const chip = $("chart-total-chip");
+  if (chip) chip.textContent = `${s.total} เหตุการณ์`;
+  renderSparkline();
+}
+
+/* ---- Sparkline แนวโน้ม 7 วันล่าสุด (ในการ์ด KPI) ---- */
+function last7DayCounts() {
+  // นับเหตุการณ์ราย "วัน" ย้อนหลัง 7 วัน (รวมวันนี้) จากข้อมูลทั้งหมด
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const buckets = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    buckets.push({ key: dateKeyFromDate(d), label: d, count: 0 });
+  }
+  const idx = {};
+  buckets.forEach((b, k) => { idx[b.key] = k; });
+  incidents.forEach(it => {
+    const k = dateKey(it.date);
+    if (k != null && idx[k] !== undefined) buckets[idx[k]].count++;
+  });
+  return buckets;
+}
+function renderSparkline() {
+  const host = $("spark-total");
+  if (!host) return;
+  try {
+    const days = last7DayCounts();
+    const vals = days.map(d => d.count);
+    const max = Math.max(1, ...vals);
+    const W = 150, H = 34, pad = 3, n = vals.length;
+    const stepX = (W - pad * 2) / (n - 1);
+    const y = (v) => H - pad - (v / max) * (H - pad * 2);
+    const pts = vals.map((v, i) => [pad + i * stepX, y(v)]);
+    const line = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+    const area = `M${pad} ${H - pad} ` + pts.map(p => "L" + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ") + ` L${(W - pad).toFixed(1)} ${H - pad} Z`;
+    const dots = pts.map((p, i) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${i === n - 1 ? 2.6 : 1.6}" fill="#fff" opacity="${i === n - 1 ? 1 : 0.55}"/>`).join("");
+    // สีตัดกับการ์ด KPI (พื้นฟ้า-น้ำเงิน) → ใช้ขาวโปร่ง
+    host.innerHTML = `
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:6px;">
+        <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="overflow:visible">
+          <path d="${area}" fill="rgba(255,255,255,0.18)"/>
+          <path d="${line}" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          ${dots}
+        </svg>
+        <span style="font-size:10px; color:rgba(255,255,255,.8); white-space:nowrap;">7 วัน</span>
+      </div>`;
+  } catch (e) { host.innerHTML = ""; }
+}
+
+/* ---- Chart ---- */
+function aggregateByFloor() {
+  // นับจากข้อมูล "จริง" ทุกค่า (ไม่จำกัดเฉพาะชั้นใน FLOORS)
+  // เพื่อให้กราฟแสดงได้แม้ชื่อชั้นจาก Sheet พิมพ์ต่างจากรายการที่กำหนดไว้
+  const counts = {};
+  activeIncidents().forEach(i => {
+    const f = (i.floor && i.floor !== "—") ? i.floor : "ไม่ระบุชั้น";
+    counts[f] = (counts[f] || 0) + 1;
+  });
+
+  // เรียงลำดับ: ชั้นที่อยู่ใน FLOORS ก่อน (ตามลำดับ) แล้วตามด้วยชั้นอื่นๆ ที่พบ
+  const ordered = [];
+  FLOORS.forEach(f => { if (counts[f] > 0) ordered.push(f); });
+  Object.keys(counts).forEach(f => { if (!ordered.includes(f)) ordered.push(f); });
+
+  return {
+    labels: ordered,
+    values: ordered.map(f => counts[f]),
+    hasData: ordered.length > 0,
+  };
+}
+
+function neonPalette(n) {
+  const base = ["#00c2cf", "#ff2d55", "#ff9f0a", "#10b981", "#7a5cff", "#ec4899",
+                "#3b82f6", "#eab308", "#06b6d4", "#f43f5e", "#0ea5e9", "#a855f7"];
+  return Array.from({ length: Math.max(n, 1) }, (_, i) => base[i % base.length]);
+}
+
+function renderChart() {
+  const barCanvas = $("floorChartBar");
+  const pieCanvas = $("floorChartPie");
+  const grid = $("chart-grid");
+  const emptyEl = $("chart-empty");
+  if (!barCanvas || !pieCanvas) return;
+
+  // กัน CDN Chart.js โหลดไม่สำเร็จ
+  if (!libReady("chart")) {
+    if (grid) grid.style.display = "none";
+    if (emptyEl) { emptyEl.style.display = "grid"; emptyEl.querySelector("div").innerHTML =
+      '<i class="fa-solid fa-plug-circle-xmark text-3xl block mb-2 opacity-50"></i>ไลบรารีกราฟ (Chart.js) โหลดไม่สำเร็จ — ตรวจสอบอินเทอร์เน็ต'; }
+    return;
+  }
+
+  const { labels, values, hasData } = aggregateByFloor();
+  if (emptyEl) emptyEl.style.display = hasData ? "none" : "grid";
+  if (grid) grid.style.display = hasData ? "" : "none";
+
+  // ทำลายของเดิมก่อนวาดใหม่
+  if (floorChartBar) { floorChartBar.destroy(); floorChartBar = null; }
+  if (floorChartPie) { floorChartPie.destroy(); floorChartPie = null; }
+  if (!hasData) return;
+
+  const colors = neonPalette(labels.length);
+  const tickColor   = cssVar("--chart-tick")   || "#7c8bb5";
+  const gridColor   = cssVar("--chart-grid")   || "rgba(0,240,255,0.07)";
+  const borderColor = cssVar("--chart-border") || "#050813";
+  const textColor   = cssVar("--text")         || "#dbe7ff";
+
+  const tooltip = {
+    backgroundColor: cssVar("--bg-panel") || "#0a1024",
+    borderColor: cssVar("--neon-cyan"), borderWidth: 1,
+    titleColor: cssVar("--neon-cyan"), bodyColor: textColor, padding: 12,
+    titleFont: { family: "'Orbitron'" }, bodyFont: { family: "'IBM Plex Sans Thai'" },
+    callbacks: { label: (c) => ` ${c.parsed.y ?? c.parsed} เหตุการณ์` },
+  };
+
+  // ปลั๊กอินเขียนเอง: วาด "ตัวเลขจำนวนครั้ง" ไว้ "ข้างในแท่ง" ให้เห็นชัด
+  // (ไม่ต้องพึ่ง chartjs-plugin-datalabels เพิ่ม — คงหลักไฟล์เดียว/พึ่งพา CDN น้อยที่สุด)
+  const barValueLabels = {
+    id: "barValueLabels",
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      const meta = chart.getDatasetMeta(0);
+      if (!meta || !meta.data) return;
+      ctx.save();
+      ctx.font = "800 14px 'Share Tech Mono', monospace";
+      ctx.textAlign = "center";
+      meta.data.forEach((bar, i) => {
+        const v = values[i];
+        if (v == null) return;
+        const p = bar.getProps(["x", "y", "base"], true);
+        const top = p.y;                                              // ยอดแท่ง
+        const base = (p.base != null) ? p.base : chart.chartArea.bottom;
+        const barH = Math.abs(base - top);                           // ความสูงแท่งจริง (px)
+        const text = String(v);
+
+        if (barH >= 26) {
+          // แท่งสูงพอ → วางตัวเลข "ข้างในแท่ง" ใกล้ยอด เป็นสีขาวหนา + ขอบเข้ม อ่านชัดบนแท่งสีนีออน
+          ctx.textBaseline = "middle";
+          ctx.lineWidth = 3.5;
+          ctx.strokeStyle = "rgba(3,7,20,.78)";                      // ขอบมืดล้อมตัวเลข = คอนทราสต์สูง
+          ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 3;
+          ctx.strokeText(text, p.x, top + 15);
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(text, p.x, top + 15);
+        } else {
+          // แท่งเตี้ยเกินกว่าจะใส่ตัวเลขข้างใน → วางเหนือแท่งแทน (สีเดียวกับแท่ง)
+          ctx.textBaseline = "bottom";
+          ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 3;
+          ctx.fillStyle = colors[i % colors.length] || textColor;
+          ctx.fillText(text, p.x, Math.max(top - 5, chart.chartArea.top + 11));
+          ctx.shadowBlur = 0;
+        }
+      });
+      ctx.restore();
+    },
+  };
+
+  // ---- Bar ----
+  floorChartBar = new Chart(barCanvas.getContext("2d"), {
+    type: "bar",
+    data: { labels, datasets: [{ label: "จำนวนเหตุการณ์", data: values,
+      backgroundColor: colors.map(c => c + "cc"), borderColor: colors, borderWidth: 1.5, borderRadius: 8, maxBarThickness: 54 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      // เผื่อพื้นที่ด้านบนเล็กน้อย ให้ตัวเลขเหนือแท่งสูงสุดไม่ถูกตัด
+      layout: { padding: { top: 18 } },
+      plugins: { legend: { display: false }, tooltip },
+      scales: {
+        x: { ticks: { color: tickColor, font: { family: "'IBM Plex Sans Thai'", size: 11 } }, grid: { display: false } },
+        y: { beginAtZero: true, ticks: { color: tickColor, stepSize: 1, precision: 0, font: { family: "'Share Tech Mono'" } }, grid: { color: gridColor } },
+      },
+    },
+    plugins: [barValueLabels],
+  });
+
+  // ---- Pie (doughnut) ----
+  floorChartPie = new Chart(pieCanvas.getContext("2d"), {
+    type: "doughnut",
+    data: { labels, datasets: [{ data: values, backgroundColor: colors.map(c => c + "dd"), borderColor, borderWidth: 2.5, hoverOffset: 10 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: "56%",
+      plugins: {
+        legend: { display: true, position: "right",
+          labels: { color: textColor, font: { family: "'IBM Plex Sans Thai'", size: 12 }, padding: 11, usePointStyle: true } },
+        tooltip,
+      },
+    },
+  });
+}
+
+/* ---- Table ---- */
+function getFilteredIncidents() {
+  const q = $("search").value.trim().toLowerCase();
+  const floor = $("filter-floor").value;
+  return activeIncidents().filter(i => {
+    const matchFloor = !floor || i.floor === floor;
+    const haystack = `${i.floor} ${i.category} ${i.floorDetail} ${i.location} ${i.description} ${i.date} ${i.time}`.toLowerCase();
+    return matchFloor && (!q || haystack.includes(q));
+  });
+}
+
+let _searchTimer = null;
+/* หน่วงการค้นหา ~160ms — ลดการ re-render ตารางทุกครั้งที่พิมพ์ (ประหยัด CPU) */
+function debouncedRenderTable() {
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(renderTable, 160);
+}
+
+function renderTable() {
+  const rows = getFilteredIncidents();
+  const tbody = $("table-body");
+  if (!tbody) return;
+  $("row-count").textContent = `${rows.length} รายการ`;
+
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="9"><i class="fa-solid fa-inbox text-2xl block mb-2"></i>ไม่พบข้อมูลที่ตรงกับเงื่อนไข</td></tr>`;
+    return;
+  }
+
+  // ใช้ _id (stable) แทน index — แก้ปัญหา indexOf อ้างถึงแถวผิด
+  tbody.innerHTML = rows.map((i, idx) => `
+      <tr>
+        <td class="font-mono text-dim">${idx + 1}</td>
+        <td class="font-mono whitespace-nowrap">${escapeHtml(i.date)}</td>
+        <td class="font-mono text-cyan whitespace-nowrap">${escapeHtml(i.time)}</td>
+        <td><span class="floor-chip">${escapeHtml(i.floor)}</span></td>
+        <td style="max-width:180px"><div class="truncate" title="${escapeHtml(i.category)}">${escapeHtml(i.category)}</div></td>
+        <td class="text-dim">${escapeHtml(i.floorDetail)}</td>
+        <td>${escapeHtml(i.location)}</td>
+        <td style="max-width:300px"><div class="truncate" title="${escapeHtml(i.description)}">${escapeHtml(i.description)}</div></td>
+        <td>
+          <div class="flex gap-1.5">
+            <button class="icon-btn" title="ดูรายละเอียด" onclick="viewIncident(${i._id})"><i class="fa-solid fa-eye"></i></button>
+            <button class="icon-btn" title="พิมพ์ใบงาน" onclick="printWorkOrder(${i._id})"><i class="fa-solid fa-print"></i></button>
+            <button class="icon-btn danger" title="ลบ" onclick="deleteIncident(${i._id})"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>`).join("");
+}
+
+/* =================================================================
+ *  ROW ACTIONS  (อ้างอิงด้วย _id ที่ stable)
+ * ================================================================= */
+function findById(id) { return incidents.find(x => x._id === id) || null; }
+
+function viewIncident(id) {
+  const i = findById(id);
+  if (!i) { showToast("ไม่พบรายการ (อาจถูกลบไปแล้ว)", "error"); return; }
+  const row = (label, val, icon) => `
+    <div class="flex gap-3 items-start">
+      <div class="text-cyan w-6 text-center pt-0.5"><i class="fa-solid ${icon}"></i></div>
+      <div class="flex-1"><div class="cy-label" style="margin-bottom:2px">${label}</div><div>${escapeHtml(val)}</div></div>
+    </div>`;
+  const photoRow = (() => {
+    const links = String(i.photos || "").split(/\s*,\s*/).map(s => s.trim()).filter(s => /^https?:\/\//.test(s));
+    if (!links.length) return "";
+    const chips = links.map((u, k) =>
+      `<a href="${escapeHtml(u)}" target="_blank" rel="noopener" class="floor-chip" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; margin:2px 4px 2px 0;"><i class="fa-solid fa-image"></i> รูป ${k + 1}</a>`).join("");
+    return `
+      <div class="flex gap-3 items-start">
+        <div class="text-cyan w-6 text-center pt-0.5"><i class="fa-solid fa-images"></i></div>
+        <div class="flex-1"><div class="cy-label" style="margin-bottom:4px">รูปภาพแนบ (${links.length})</div><div>${chips}</div></div>
+      </div>`;
+  })();
+
+  $("modal-body").innerHTML =
+    row("วันที่เกิดเหตุ", i.date, "fa-calendar") +
+    row("เวลา", i.time, "fa-clock") +
+    row("ชั้น", i.floor, "fa-building") +
+    row("ประเภท/อาการ", i.category, "fa-notes-medical") +
+    row("โซน", i.floorDetail, "fa-circle-info") +
+    row("สถานที่เกิดเหตุ", i.location, "fa-location-dot") +
+    row("รายละเอียดเหตุการณ์", i.description, "fa-file-lines") +
+    photoRow;
+  $("modal-print-btn").onclick = () => { closeModal(); printWorkOrder(id); };
+  $("detail-modal").classList.add("open");
+}
+
+function closeModal() { $("detail-modal").classList.remove("open"); }
+
+function deleteIncident(id) {
+  const idx = incidents.findIndex(x => x._id === id);
+  if (idx === -1) { showToast("ไม่พบรายการ (อาจถูกลบไปแล้ว)", "error"); return; }
+  const i = incidents[idx];
+  if (!confirm(`ยืนยันการลบรายการ?\n\n${i.date} ${i.time} · ${i.floor}\n${i.description}`)) return;
+  incidents.splice(idx, 1);
+  renderAll();
+  showToast("ลบรายการออกจากหน้าจอแล้ว (ไม่กระทบ Google Sheets)", "info");
+}
+
+/* =================================================================
+ *  EXPORT — CSV (UTF-8 BOM + กัน Formula Injection)
+ * ================================================================= */
+function csvCell(v) {
+  let s = String(v ?? "");
+  // กัน CSV/Formula Injection: ค่าขึ้นต้นด้วย = + - @ tab CR → นำหน้าด้วย '
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  return `"${s.replace(/"/g, '""')}"`;
+}
+
+function exportCSV() {
+  const rows = getFilteredIncidents();
+  if (rows.length === 0) { showToast("ไม่มีข้อมูลสำหรับส่งออก", "error"); return; }
+  try {
+    const headers = ["วันที่เกิดเหตุ", "เวลา", "ชั้น", "โซน", "สถานที่เกิดเหตุ", "รายละเอียดเหตุการณ์"];
+    const lines = [headers.map(csvCell).join(",")];
+    rows.forEach(i => lines.push([i.date, i.time, i.floor, i.floorDetail, i.location, i.description].map(csvCell).join(",")));
+    const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    triggerDownload(blob, `incident_report_${stamp()}.csv`);
+    showToast("ดาวน์โหลด CSV สำเร็จ", "success");
+  } catch (err) {
+    console.error("exportCSV:", err);
+    showToast("สร้าง CSV ไม่สำเร็จ: " + err.message, "error");
+  }
+}
+
+/* =================================================================
+ *  CHART IMAGE — ดึงภาพกราฟปัจจุบัน (Bar / Pie) สำหรับรายงาน
+ * ================================================================= */
+function chartToImg(chart) {
+  if (chart && libReady("chart")) {
+    try { return chart.toBase64Image("image/png", 1); } catch (e) { return null; }
+  }
+  return null;
+}
+function getChartImage()    { return chartToImg(floorChartBar); }
+function getChartImagePie() { return chartToImg(floorChartPie); }
+
+/* เรนเดอร์กราฟแท่ง/วงกลม "สำหรับรายงาน" โดยใช้สีตามธีมรายงาน (RP)
+ * เพื่อให้ตัวอักษรแกน/legend อ่านชัดบนทุกธีม (ไม่ดึงภาพจากแดชบอร์ดที่สีไม่ตรง) */
+function renderBarImageForReport() {
+  if (!libReady("chart")) return null;
+  const { labels, values, hasData } = aggregateByFloor();
+  if (!hasData) return null;
+  try {
+    const c = document.createElement("canvas"); c.width = 560; c.height = 430;
+    const colors = neonPalette(labels.length);
+    const ch = new Chart(c.getContext("2d"), {
+      type: "bar",
+      data: { labels, datasets: [{ data: values, backgroundColor: colors.map(x => x + "cc"), borderColor: colors, borderWidth: 1.5, borderRadius: 8, maxBarThickness: 64 }] },
+      options: {
+        responsive: false, animation: false, layout: { padding: 8 },
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          x: { ticks: { color: RP.trendAxis, font: { family: "'IBM Plex Sans Thai'", size: 14 } }, grid: { display: false } },
+          y: { beginAtZero: true, ticks: { color: RP.trendAxis, stepSize: 1, precision: 0, font: { family: "'Share Tech Mono'" } }, grid: { color: RP.trendGrid } },
+        },
+      },
+    });
+    const img = ch.toBase64Image("image/png", 1); ch.destroy(); return img;
+  } catch (e) { console.warn("renderBarImageForReport:", e); return null; }
+}
+function renderPieImageForReport() {
+  if (!libReady("chart")) return null;
+  const { labels, values, hasData } = aggregateByFloor();
+  if (!hasData) return null;
+  try {
+    const c = document.createElement("canvas"); c.width = 560; c.height = 430;
+    const colors = neonPalette(labels.length);
+    const ch = new Chart(c.getContext("2d"), {
+      type: "doughnut",
+      data: { labels, datasets: [{ data: values, backgroundColor: colors.map(x => x + "dd"), borderColor: RP.cardBot, borderWidth: 2.5 }] },
+      options: {
+        responsive: false, animation: false, cutout: "55%", layout: { padding: 8 },
+        plugins: {
+          legend: { display: true, position: "bottom", labels: { color: RP.text, font: { family: "'IBM Plex Sans Thai'", size: 14 }, padding: 14, usePointStyle: true } },
+          tooltip: { enabled: false },
+        },
+      },
+    });
+    const img = ch.toBase64Image("image/png", 1); ch.destroy(); return img;
+  } catch (e) { console.warn("renderPieImageForReport:", e); return null; }
+}
+
+/* =================================================================
+ *  WEEKLY — แนวโน้มรายวัน (จ–อา) + เปรียบเทียบสัปดาห์ก่อน
+ *  ยึดสัปดาห์อ้างอิง: ถ้าโหมด "รายสัปดาห์" ใช้สัปดาห์ที่เลือก, ไม่งั้นใช้สัปดาห์นี้
+ *  คำนวณจาก incidents ทั้งหมด (ตามวันที่จริง) เพื่อให้เปรียบเทียบได้เสมอ
+ * ================================================================= */
+function computeWeekly() {
+  const offset = (dateFilter.mode === "week") ? dateFilter.weekOffset : 0;
+  const mon = mondayOf(offset);
+  const dayNames = ["จ", "อ", "พ", "พฤ", "ศ", "ส", "อา"];
+  const days = [];
+  for (let d = 0; d < 7; d++) {
+    const day = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + d);
+    const k = dateKeyFromDate(day);
+    days.push({ label: dayNames[d], dateLabel: keyToLabel(k), count: incidents.filter(i => dateKey(i.date) === k).length });
+  }
+  const thisTotal = days.reduce((s, x) => s + x.count, 0);
+  const prevMon = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() - 7);
+  const pf = dateKeyFromDate(prevMon);
+  const pt = dateKeyFromDate(new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() - 1));
+  const prevTotal = incidents.filter(i => { const k = dateKey(i.date); return k != null && k >= pf && k <= pt; }).length;
+  const diff = thisTotal - prevTotal;
+  const pct = prevTotal > 0 ? Math.round(diff / prevTotal * 100) : (thisTotal > 0 ? 100 : 0);
+  const sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
+  return {
+    days, thisTotal, prevTotal, diff, pct,
+    weekLabel: `${keyToLabel(dateKeyFromDate(mon))} – ${keyToLabel(dateKeyFromDate(sun))}`,
+    prevLabel: `${keyToLabel(pf)} – ${keyToLabel(pt)}`,
+  };
+}
+
+/* วาดกราฟเส้นแนวโน้มลงแคนวาสนอกจอ แล้วคืนเป็น dataURL (เชื่อถือได้กับ html2canvas) */
+function renderTrendImage(days) {
+  if (!libReady("chart")) return null;
+  try {
+    const c = document.createElement("canvas");
+    c.width = 900; c.height = 240;
+    const ch = new Chart(c.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: days.map(d => d.label),
+        datasets: [{
+          data: days.map(d => d.count),
+          borderColor: RP.trendLine,
+          backgroundColor: RP.trendFill,
+          fill: true, tension: 0.35, borderWidth: 3,
+          pointBackgroundColor: RP.trendLine, pointBorderColor: RP.trendPointBorder,
+          pointRadius: 5, pointHoverRadius: 5,
+        }],
+      },
+      options: {
+        responsive: false, animation: false,
+        layout: { padding: 10 },
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+        },
+        scales: {
+          x: { ticks: { color: RP.trendAxis, font: { family: "'IBM Plex Sans Thai'", size: 14 } }, grid: { display: false } },
+          y: { beginAtZero: true, ticks: { color: RP.trendAxis, stepSize: 1, precision: 0, font: { family: "'Share Tech Mono'" } }, grid: { color: RP.trendGrid } },
+        },
+      },
+    });
+    // วาดค่าตัวเลขบนจุด (datalabels แบบเขียนเอง)
+    const img = ch.toBase64Image("image/png", 1);
+    ch.destroy();
+    return img;
+  } catch (e) { console.warn("renderTrendImage:", e); return null; }
+}
+
+/* =================================================================
+ *  ANALYTICS — คำนวณบทวิเคราะห์ครบทุกมิติสำหรับรายงาน
+ * ================================================================= */
+function computeAnalytics() {
+  const rows = activeIncidents();
+  const total = rows.length;
+  const today = formatDateDDMMYYYY(new Date());
+  const todayCount = rows.filter(i => i.date === today).length;
+
+  // กระจายตามชั้น (เรียงมาก→น้อย)
+  const floorCounts = {};
+  rows.forEach(i => { const f = (i.floor && i.floor !== "—") ? i.floor : "ไม่ระบุชั้น"; floorCounts[f] = (floorCounts[f] || 0) + 1; });
+  const floorRank = Object.entries(floorCounts).sort((a, b) => b[1] - a[1])
+    .map(([floor, count]) => ({ floor, count, pct: total ? Math.round(count / total * 100) : 0 }));
+  const topFloor = floorRank[0] || { floor: "—", count: 0, pct: 0 };
+
+  // ช่วงเวลา (period) จากชั่วโมง
+  const periods = [
+    { key: "night",   label: "กลางดึก",  range: "00:00–05:59", icon: "🌙", color: "#7a5cff", count: 0 },
+    { key: "morning", label: "เช้า",     range: "06:00–11:59", icon: "🌅", color: "#00d9e8", count: 0 },
+    { key: "afternoon", label: "บ่าย",   range: "12:00–17:59", icon: "☀️", color: "#ffb000", count: 0 },
+    { key: "evening", label: "ค่ำ",      range: "18:00–23:59", icon: "🌃", color: "#ff4d6d", count: 0 },
+  ];
+  const hourCounts = new Array(24).fill(0);
+  rows.forEach(i => {
+    const h = parseHour(i.time);
+    if (h == null) return;
+    hourCounts[h]++;
+    if (h < 6) periods[0].count++; else if (h < 12) periods[1].count++; else if (h < 18) periods[2].count++; else periods[3].count++;
+  });
+  const peakPeriod = periods.slice().sort((a, b) => b.count - a.count)[0];
+  let peakHour = -1, peakHourCount = 0;
+  hourCounts.forEach((c, h) => { if (c > peakHourCount) { peakHourCount = c; peakHour = h; } });
+
+  // จำนวนวันที่มีข้อมูล + เฉลี่ยต่อวัน
+  const uniqueDates = new Set(rows.map(i => i.date).filter(Boolean));
+  const dayCount = uniqueDates.size || 1;
+  const avgPerDay = total ? (total / dayCount) : 0;
+
+  // วันที่เกิดเหตุมากที่สุด
+  const dateCounts = {};
+  rows.forEach(i => { if (i.date) dateCounts[i.date] = (dateCounts[i.date] || 0) + 1; });
+  const busiestDate = Object.entries(dateCounts).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
+
+  // เหตุการณ์ล่าสุด (สูงสุด 5)
+  const latest = rows.slice(0, 5);
+
+  // แยกตามประเภท/อาการ (เรียงมาก→น้อย)
+  const catCounts = {};
+  rows.forEach(i => { const c = i.category || "ไม่ระบุ"; catCounts[c] = (catCounts[c] || 0) + 1; });
+  const categoryRank = Object.entries(catCounts).sort((a, b) => b[1] - a[1])
+    .map(([category, count]) => ({ category, count, pct: total ? Math.round(count / total * 100) : 0 }));
+  const topCategory = categoryRank[0] || { category: "—", count: 0, pct: 0 };
+
+  return {
+    total, todayCount, floorRank, topFloor, periods, peakPeriod,
+    peakHour, peakHourCount, dayCount, avgPerDay,
+    busiestDate: { date: busiestDate[0], count: busiestDate[1] },
+    latest, floorTypes: floorRank.length,
+    categoryRank, topCategory,
+  };
+}
+
+/* สร้างข้อความ insight อัตโนมัติ */
+function buildInsights(a) {
+  const out = [];
+  if (a.total === 0) { out.push("ยังไม่มีข้อมูลเหตุการณ์ในระบบ"); return out; }
+  if (a.topFloor.count > 0)
+    out.push(`<b>${escapeHtml(a.topFloor.floor)}</b> เป็นจุดเสี่ยงสูงสุด เกิดเหตุ <b>${a.topFloor.count}</b> ครั้ง คิดเป็น <b>${a.topFloor.pct}%</b> ของทั้งหมด`);
+  if (a.peakPeriod && a.peakPeriod.count > 0)
+    out.push(`ช่วงเวลาที่เกิดเหตุบ่อยที่สุดคือ <b>${a.peakPeriod.label}</b> (${a.peakPeriod.range}) จำนวน <b>${a.peakPeriod.count}</b> ครั้ง`);
+  if (a.peakHour >= 0)
+    out.push(`ชั่วโมงเร่งด่วนคือเวลาประมาณ <b>${pad(a.peakHour)}:00 น.</b> (${a.peakHourCount} ครั้ง)`);
+  out.push(`เฉลี่ย <b>${a.avgPerDay.toFixed(1)}</b> เหตุการณ์/วัน จากข้อมูล <b>${a.dayCount}</b> วัน`);
+  if (a.busiestDate.count > 0)
+    out.push(`วันที่เกิดเหตุมากที่สุดคือ <b>${escapeHtml(a.busiestDate.date)}</b> (${a.busiestDate.count} ครั้ง)`);
+  out.push(`พบเหตุการณ์กระจายใน <b>${a.floorTypes}</b> พื้นที่/ชั้น`);
+  return out;
+}
+
+/* =================================================================
+ *  EXECUTIVE SUMMARY — บทสรุปผู้บริหาร (ข้อความ) สำหรับนำเสนอ/อีเมล/LINE
+ * ================================================================= */
+function buildExecutiveSummaryText() {
+  const a = computeAnalytics();
+  const wk = computeWeekly();
+  const L = [];
+  L.push("📋 สรุปรายงานเหตุการณ์/อุบัติเหตุ");
+  L.push("ช่วงเวลา: " + rangeText());
+  L.push("──────────────");
+  L.push("• เหตุการณ์รวม: " + a.total + " ครั้ง");
+  if (a.total > 0) {
+    if (a.topFloor.count > 0) L.push("• จุดเสี่ยงสูงสุด: " + a.topFloor.floor + " (" + a.topFloor.count + " ครั้ง · " + a.topFloor.pct + "%)");
+    if (a.topCategory.count > 0) L.push("• ประเภทที่พบบ่อย: " + a.topCategory.category + " (" + a.topCategory.count + " ครั้ง · " + a.topCategory.pct + "%)");
+    if (a.peakPeriod && a.peakPeriod.count > 0) L.push("• ช่วงเวลาเสี่ยง: " + a.peakPeriod.label + " " + a.peakPeriod.range + " (" + a.peakPeriod.count + " ครั้ง)");
+    if (a.peakHour >= 0) L.push("• ชั่วโมงเร่งด่วน: ~" + pad(a.peakHour) + ":00 น. (" + a.peakHourCount + " ครั้ง)");
+    L.push("• เฉลี่ย " + a.avgPerDay.toFixed(1) + " ครั้ง/วัน · กระจาย " + a.floorTypes + " พื้นที่");
+    const arrow = wk.diff > 0 ? "เพิ่มขึ้น ▲" : wk.diff < 0 ? "ลดลง ▼" : "คงที่ ■";
+    L.push("• เทียบสัปดาห์ก่อน: " + arrow + " " + Math.abs(wk.diff) + " ครั้ง (" + (wk.pct > 0 ? "+" : "") + wk.pct + "%) [" + wk.thisTotal + " vs " + wk.prevTotal + "]");
+    if (a.floorRank && a.floorRank.length) {
+      const top3 = a.floorRank.slice(0, 3).map((f, i) => (i + 1) + ". " + f.floor + " (" + f.count + ")").join("  ");
+      L.push("• อันดับชั้นเสี่ยง: " + top3);
+    }
+  } else {
+    L.push("• ไม่พบเหตุการณ์ในช่วงเวลาที่เลือก");
+  }
+  L.push("──────────────");
+  const n = new Date();
+  L.push("ออกรายงาน: " + formatDateDDMMYYYY(n) + " " + pad(n.getHours()) + ":" + pad(n.getMinutes()) + " น.");
+  return L.join("\n");
+}
+
+async function copyExecutiveSummary() {
+  const text = buildExecutiveSummaryText();
+  let ok = false;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); ok = true; }
+  } catch (e) { ok = false; }
+  if (!ok) {
+    // fallback สำหรับเบราว์เซอร์/บริบทที่ไม่อนุญาต Clipboard API
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;left:-9999px;top:0;";
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      ok = document.execCommand("copy"); document.body.removeChild(ta);
+    } catch (e2) { ok = false; }
+  }
+  if (ok) showToast("คัดลอกบทสรุปผู้บริหารแล้ว — วางใน LINE / อีเมล / สไลด์ได้เลย", "success");
+  else { showToast("คัดลอกอัตโนมัติไม่ได้ — แสดงข้อความให้คัดลอกเองแทน", "info"); window.prompt("คัดลอกข้อความด้านล่าง (Ctrl/Cmd+C):", text); }
+}
+/* ===== ธีมรายงาน (สลับได้: มืด / สว่าง / เขียว) ===== */
+const REPORT_THEMES = {
+  dark: {
+    bg: "#070b1a", text: "#eaf1ff", dim: "#93a3cc", border: "#26345f",
+    cyan: "#00e5ff", emerg: "#ff4d6d", green: "#22e0a1",
+    cardTop: "#121d3d", cardBot: "#0c1530", barTrack: "rgba(255,255,255,.06)",
+    headerGrad: "linear-gradient(120deg,#0a1330 0%,#13204d 45%,#3a1466 100%)",
+    footerBg: "#060a16", chipBg: "rgba(0,229,255,.14)",
+    headTitle: "#ffffff", headSub: "#aebbe0",
+    glowA: "rgba(0,229,255,.25)", glowB: "rgba(255,77,109,.22)",
+    trendLine: "#22e6ff", trendFill: "rgba(34,230,255,0.15)", trendPointBorder: "#06223a",
+    trendAxis: "#9fb2d6", trendGrid: "rgba(120,140,190,0.15)",
+    kpi: ["linear-gradient(140deg,#0a8aa8,#0e5fb0)", "linear-gradient(140deg,#c01d4a,#7a1670)", "linear-gradient(140deg,#0e8f6e,#0b6e57)", "linear-gradient(140deg,#5b3df0,#7a1bd0)"],
+    kpiText: "#ffffff", bannerBg: "linear-gradient(160deg,#3a2a12,#2a1d0c)", bannerText: "#ffd9a8", pngBg: "#020409",
+  },
+  light: {
+    bg: "#eef1f8", text: "#1f2742", dim: "#5f6b8c", border: "#d2dcef",
+    cyan: "#0e87b4", emerg: "#e0405f", green: "#0f9e6e",
+    cardTop: "#ffffff", cardBot: "#f3f6fd", barTrack: "rgba(30,40,80,.08)",
+    headerGrad: "linear-gradient(120deg,#dbe7ff 0%,#e7e0ff 50%,#ffe6f3 100%)",
+    footerBg: "#e6ebf6", chipBg: "rgba(14,135,180,.13)",
+    headTitle: "#182444", headSub: "#566087",
+    glowA: "rgba(14,135,180,.18)", glowB: "rgba(224,64,95,.14)",
+    trendLine: "#0e9bc4", trendFill: "rgba(14,155,196,0.16)", trendPointBorder: "#ffffff",
+    trendAxis: "#5f6b8c", trendGrid: "rgba(40,50,80,0.10)",
+    kpi: ["linear-gradient(140deg,#0aa0c2,#1e6fd0)", "linear-gradient(140deg,#e0405f,#a02a86)", "linear-gradient(140deg,#12a880,#0e8268)", "linear-gradient(140deg,#7458f5,#9333d8)"],
+    kpiText: "#ffffff", bannerBg: "linear-gradient(160deg,#fff3d6,#ffe7bf)", bannerText: "#7a5310", pngBg: "#dfe5f2",
+  },
+  green: {
+    bg: "#04140e", text: "#e7fff4", dim: "#86b8a3", border: "#1e4a39",
+    cyan: "#2effb0", emerg: "#ff6b8a", green: "#22e0a1",
+    cardTop: "#0c2a20", cardBot: "#08201a", barTrack: "rgba(255,255,255,.06)",
+    headerGrad: "linear-gradient(120deg,#06231a 0%,#0b3d2e 50%,#123a2c 100%)",
+    footerBg: "#03110c", chipBg: "rgba(46,255,176,.14)",
+    headTitle: "#ffffff", headSub: "#a6d8c5",
+    glowA: "rgba(46,255,176,.22)", glowB: "rgba(34,224,161,.18)",
+    trendLine: "#2effb0", trendFill: "rgba(46,255,176,0.16)", trendPointBorder: "#06231a",
+    trendAxis: "#86b8a3", trendGrid: "rgba(120,190,160,0.15)",
+    kpi: ["linear-gradient(140deg,#0e9e7a,#0b6e57)", "linear-gradient(140deg,#c79a16,#a05a0e)", "linear-gradient(140deg,#0aa0a0,#0b6e6e)", "linear-gradient(140deg,#3f8f5f,#1f6e46)"],
+    kpiText: "#ffffff", bannerBg: "linear-gradient(160deg,#2a2410,#1f1c0a)", bannerText: "#ffe6a8", pngBg: "#020a07",
+  },
+};
+let reportTheme = "dark";
+let RP = REPORT_THEMES[reportTheme];
+
+function kpiCard(icon, value, label, sub, grad) {
+  return `
+    <div style="flex:1; min-width:0; background:${grad}; border-radius:16px; padding:18px 18px 16px; position:relative; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.35);">
+      <div style="position:absolute; right:-10px; top:-12px; font-size:64px; opacity:.16;">${icon}</div>
+      <div style="font-size:30px;">${icon}</div>
+      <div style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:32px; line-height:1.05; color:${RP.kpiText}; margin-top:6px; word-break:break-word;">${escapeHtml(String(value))}</div>
+      <div style="font-size:12.5px; font-weight:600; color:${RP.kpiText}; opacity:.95; margin-top:6px;">${escapeHtml(label)}</div>
+      <div style="font-size:11px; color:${RP.kpiText}; opacity:.72; margin-top:2px;">${escapeHtml(sub)}</div>
+    </div>`;
+}
+
+function sectionTitle(icon, th, en) {
+  return `<div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;">
+      <span style="font-size:18px;">${icon}</span>
+      <span style="font-family:'Orbitron',sans-serif; font-weight:700; font-size:14px; letter-spacing:.05em; color:${RP.cyan};">${th}</span>
+      <span style="font-size:11px; color:${RP.dim}; letter-spacing:.12em; text-transform:uppercase;">${en}</span>
+    </div>`;
+}
+function card(inner, extra, accent) {
+  const bar = accent
+    ? `<div style="height:4px; margin:-22px -24px 18px; border-radius:18px 18px 0 0; background:linear-gradient(90deg,${accent},${accent}55 60%,transparent);"></div>`
+    : "";
+  // มิติ: ไล่เฉดพื้น + ขอบบนไฮไลต์ + เงาลึก + เงาวงรีมุมบน (เรนเดอร์ได้ใน html2canvas)
+  return `<div style="position:relative; overflow:hidden; background:linear-gradient(160deg,${RP.cardTop},${RP.cardBot}); border:1px solid ${RP.border}; border-top:1px solid ${RP.headSub}33; border-radius:18px; padding:22px 24px; box-shadow:0 10px 30px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05); ${extra || ""}">
+    <div style="position:absolute; right:-50px; top:-60px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle, ${RP.cyan}14, transparent 70%); pointer-events:none;"></div>
+    <div style="position:relative; z-index:1;">${bar}${inner}</div>
+  </div>`;
+}
+
+function barRow(label, count, pct, color, maxPct) {
+  const w = maxPct ? Math.max(4, Math.round(pct / maxPct * 100)) : 0;
+  return `
+    <div style="margin-bottom:11px;">
+      <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:4px;">
+        <span style="color:${RP.text};">${escapeHtml(label)}</span>
+        <span style="color:${RP.dim};"><b style="color:${color};">${count}</b> ครั้ง · ${pct}%</span>
+      </div>
+      <div style="height:11px; background:${RP.barTrack}; border-radius:99px; overflow:hidden;">
+        <div style="height:100%; width:${w}%; border-radius:99px; background:linear-gradient(90deg,${color},${color}aa);"></div>
+      </div>
+    </div>`;
+}
+
+/* A4 landscape ที่ 96dpi ≈ 1123 × 794 px (อัตราส่วน 1.414 ตรงกับ A4) */
+const PAGE_W = 1123, PAGE_H = 794;
+
+function createReportPages() {
+  const a = computeAnalytics();
+  const chartImg = renderBarImageForReport();
+  const chartImgPie = renderPieImageForReport();
+  const now = new Date();
+  const reportRows = activeIncidents();
+
+  // แนวโน้มรายวัน + เปรียบเทียบสัปดาห์ก่อน
+  const wk = computeWeekly();
+  const trendImg = renderTrendImage(wk.days);
+  const up = wk.diff > 0, down = wk.diff < 0;
+  const cmpArrow = up ? "▲" : down ? "▼" : "■";
+  const cmpColor = up ? RP.emerg : down ? RP.green : RP.dim;
+  const cmpSign  = wk.pct > 0 ? "+" : "";
+  const cmpHTML = `
+    <div style="text-align:center; padding:10px 0 2px;">
+      <div style="font-size:12px; color:${RP.dim}; margin-bottom:6px;">สัปดาห์นี้ (${escapeHtml(wk.weekLabel)})</div>
+      <div style="font-family:'Orbitron',sans-serif; font-size:52px; line-height:1; color:${RP.text}; font-weight:700;">${wk.thisTotal}</div>
+      <div style="font-size:12px; color:${RP.dim}; margin-top:4px;">เหตุการณ์</div>
+      <div style="margin:16px auto 0; display:inline-flex; align-items:center; gap:8px; padding:8px 18px; border-radius:99px; background:${RP.barTrack}; border:1px solid ${RP.border};">
+        <span style="color:${cmpColor}; font-size:19px; font-weight:700;">${cmpArrow}</span>
+        <span style="color:${cmpColor}; font-weight:700; font-size:16px;">${Math.abs(wk.diff)} ครั้ง</span>
+        <span style="color:${cmpColor}; font-size:13px;">(${cmpSign}${wk.pct}%)</span>
+      </div>
+      <div style="font-size:12px; color:${RP.dim}; margin-top:14px; line-height:1.7;">
+        เทียบสัปดาห์ก่อน <b style="color:${RP.text};">${wk.prevTotal}</b> ครั้ง<br/>
+        <span style="opacity:.8;">${escapeHtml(wk.prevLabel)}</span>
+      </div>
+    </div>`;
+
+  // KPI cards
+  const kpis = `
+    <div style="display:flex; gap:14px; margin-bottom:16px; flex-wrap:nowrap;">
+      ${kpiCard("📊", a.total, "ยอดรวมเหตุการณ์", "Total Incidents", RP.kpi[0])}
+      ${kpiCard("⚠️", a.topFloor.floor, "จุดเสี่ยงสูงสุด", a.topFloor.count + " ครั้ง · " + a.topFloor.pct + "%", RP.kpi[1])}
+      ${kpiCard("🩺", a.topCategory.count ? a.topCategory.category : "—", "อาการที่พบบ่อย", a.topCategory.count + " ครั้ง · " + a.topCategory.pct + "%", RP.kpi[2])}
+      ${kpiCard("⏰", a.peakPeriod && a.peakPeriod.count ? a.peakPeriod.label : "—", "ช่วงเวลาเสี่ยง", a.peakPeriod ? a.peakPeriod.range : "", RP.kpi[3])}
+    </div>`;
+
+  // ranking bars (จำกัด top 8 เพื่อให้พอดีหน้า)
+  const floorColors = ["#00e5ff", "#ff5ccd", "#ffaa1d", "#22e0a1", "#9d6bff", "#ff4d6d", "#3b9dff", "#ffd23f"];
+  const fRank = a.floorRank.slice(0, 8);
+  const maxFloorPct = fRank.length ? fRank[0].pct : 0;
+  const floorBars = fRank.length
+    ? fRank.map((f, idx) => barRow(f.floor, f.count, f.pct, floorColors[idx % floorColors.length], maxFloorPct)).join("")
+      + (a.floorRank.length > 8 ? `<div style="color:${RP.dim}; font-size:11px; margin-top:4px;">… และอีก ${a.floorRank.length - 8} ชั้น</div>` : "")
+    : `<div style="color:${RP.dim}; font-style:italic; padding:8px 0;">ยังไม่มีข้อมูล</div>`;
+
+  const catColors = ["#22e6ff", "#ff5cc8", "#ffb02e", "#2effb0", "#9d6bff", "#ff3b6b", "#4d8bff", "#ffd23f"];
+  const cRank = a.categoryRank.slice(0, 8);
+  const maxCatPct = cRank.length ? cRank[0].pct : 0;
+  const catBars = cRank.length
+    ? cRank.map((c, idx) => barRow(c.category, c.count, c.pct, catColors[idx % catColors.length], maxCatPct)).join("")
+      + (a.categoryRank.length > 8 ? `<div style="color:${RP.dim}; font-size:11px; margin-top:4px;">… และอีก ${a.categoryRank.length - 8} ประเภท</div>` : "")
+    : `<div style="color:${RP.dim}; font-style:italic; padding:8px 0;">ยังไม่มีข้อมูล</div>`;
+
+  // period bars
+  const maxPeriod = Math.max(1, ...a.periods.map(p => p.count));
+  const periodBars = a.periods.map(p => {
+    const pct = a.total ? Math.round(p.count / a.total * 100) : 0;
+    const w = Math.round(p.count / maxPeriod * 100);
+    return `
+      <div style="margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;">
+          <span style="color:${RP.text};">${p.icon} ${p.label} <span style="color:${RP.dim}; font-size:11px;">${p.range}</span></span>
+          <span style="color:${RP.dim};"><b style="color:${p.color};">${p.count}</b> ครั้ง · ${pct}%</span>
+        </div>
+        <div style="height:12px; background:${RP.barTrack}; border-radius:99px; overflow:hidden;">
+          <div style="height:100%; width:${Math.max(p.count ? 4 : 0, w)}%; border-radius:99px; background:linear-gradient(90deg,${p.color},${p.color}aa);"></div>
+        </div>
+      </div>`;
+  }).join("");
+
+  // insights
+  const insights = buildInsights(a).map(t =>
+    `<li style="margin-bottom:11px; padding-left:24px; position:relative; line-height:1.55; color:${RP.text}; font-size:13.5px;">
+       <span style="position:absolute; left:0; top:1px; color:${RP.cyan};">▹</span>${t}</li>`).join("");
+
+  // latest incidents
+  const latest = a.latest.length
+    ? a.latest.map(i => `
+        <div style="display:flex; gap:12px; padding:11px 0; border-bottom:1px dashed ${RP.border};">
+          <div style="flex-shrink:0; width:90px;">
+            <div style="font-family:'Share Tech Mono',monospace; color:${RP.cyan}; font-size:13px;">${escapeHtml(i.time)}</div>
+            <div style="font-size:11px; color:${RP.dim};">${escapeHtml(i.date)}</div>
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:12px; margin-bottom:3px;"><span style="display:inline-block; padding:2px 9px; border-radius:99px; background:${RP.chipBg}; color:${RP.cyan}; border:1px solid ${RP.border}; font-size:11px;">${escapeHtml(i.floor)}</span> <span style="color:${RP.cyan}; font-size:11px;">${escapeHtml(i.category)}</span> <span style="color:${RP.dim};">${escapeHtml(i.location)}</span></div>
+            <div style="font-size:12.5px; color:${RP.text}; line-height:1.5;">${escapeHtml(i.description)}</div>
+          </div>
+        </div>`).join("")
+    : `<div style="color:${RP.dim}; font-style:italic; padding:8px 0;">ยังไม่มีเหตุการณ์</div>`;
+
+  const emptyBanner = (a.total === 0) ? `
+    <div style="margin-bottom:16px; padding:16px 20px; border:1px solid ${RP.border}; border-radius:14px;
+                background:${RP.bannerBg}; color:${RP.bannerText}; display:flex; gap:12px; align-items:center;">
+      <span style="font-size:22px;">⚠️</span>
+      <div style="font-size:13px; line-height:1.5;">
+        ไม่พบเหตุการณ์ในช่วงเวลาที่เลือก (<b>${escapeHtml(rangeText())}</b>) — เปลี่ยนตัวกรองเป็น "ทั้งหมด" แล้วเปิดรายงานอีกครั้ง
+      </div>
+    </div>` : "";
+
+  const chartsHTML = chartImg
+    ? `<div style="display:flex; gap:14px;">
+         <img src="${chartImg}" style="flex:1; min-width:0; max-height:270px; object-fit:contain; display:block;" crossorigin="anonymous" />
+         ${chartImgPie ? `<img src="${chartImgPie}" style="flex:1; min-width:0; max-height:270px; object-fit:contain; display:block;" crossorigin="anonymous" />` : ""}
+       </div>`
+    : `<div style="padding:40px; text-align:center; color:${RP.dim}; font-style:italic;">ยังไม่มีข้อมูลกราฟ</div>`;
+
+  /* ---- ส่วนประกอบหน้า ---- */
+  const hero = `
+    <div style="background:${RP.headerGrad}; padding:22px 30px; position:relative; overflow:hidden;">
+      <div style="position:absolute; right:-30px; top:-30px; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle,${RP.glowA},transparent 70%);"></div>
+      <div style="position:absolute; right:130px; bottom:-50px; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,${RP.glowB},transparent 70%);"></div>
+      <div style="display:inline-block; padding:5px 14px; border-radius:99px; background:${RP.chipBg}; border:1px solid ${RP.border}; color:${RP.cyan}; font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:.2em;">📡 ANALYTICS REPORT</div>
+      <div style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:26px; letter-spacing:.02em; color:${RP.headTitle}; margin-top:10px;">INCIDENT ACCIDENT COMMAND CENTER</div>
+      <div style="color:${RP.headSub}; font-size:13px; margin-top:5px;">รายงานวิเคราะห์เหตุการณ์เชิงลึก · ช่วงเวลา: ${escapeHtml(rangeText())} · Generated: ${formatDateDDMMYYYY(now)} ${pad(now.getHours())}:${pad(now.getMinutes())} น.</div>
+    </div>`;
+
+  const strip = (subtitle) => `
+    <div style="background:${RP.headerGrad}; padding:15px 30px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:17px; color:${RP.headTitle};">INCIDENT ACCIDENT COMMAND CENTER</div>
+        <div style="font-size:12px; color:${RP.headSub}; margin-top:2px;">${subtitle}</div>
+      </div>
+      <div style="text-align:right; font-size:11px; color:${RP.headSub}; line-height:1.5;">ช่วงเวลา<br/><b style="color:${RP.cyan};">${escapeHtml(rangeText())}</b></div>
+    </div>`;
+
+  const footer = (no, total) => `
+    <div style="position:absolute; left:0; right:0; bottom:0; padding:11px 30px; background:${RP.footerBg}; border-top:1px solid ${RP.border}; color:${RP.dim}; font-size:11px; display:flex; justify-content:space-between;">
+      <span>🛡️ INCIDENT ACCIDENT COMMAND CENTER · Glassmorphism Cyber Edition</span>
+      <span>หน้า ${no} / ${total} · ${reportRows.length} รายการ</span>
+    </div>`;
+
+  // ---- เตรียมหน้ารายละเอียดเหตุการณ์ (แบ่งหน้าโดย "วัดความสูงจริง" ของแต่ละการ์ด ----
+  // ---- กันปัญหาข้อความหลุดกรอบล่าง เมื่อบางเหตุการณ์มีรายละเอียดยาวกว่าปกติ) ----
+  const DETAIL_COLS = 2, DETAIL_GAP = 12;
+  // ความกว้างจริงของพื้นที่ข้อความในการ์ด = ความกว้างคอลัมน์ - แถบสีซ้าย(6px) - เส้นขอบ(2px) - padding ซ้ายขวา(28px)
+  const DETAIL_CARD_TEXT_WIDTH = (PAGE_W - 60 - DETAIL_GAP) / DETAIL_COLS - 6 - 2 - 28;
+
+  /* ตัดข้อความ "รายละเอียดเหตุการณ์" ให้พอดี 3 บรรทัดจริง โดยวัดความสูงจาก DOM จริง
+     สาเหตุที่ต้องทำแบบนี้แทนการใช้ CSS -webkit-line-clamp: html2canvas (ที่ใช้ตอนส่งออก PNG/PDF)
+     ไม่รองรับ -webkit-line-clamp อย่างถูกต้อง — ตอนพรีวิวในเบราว์เซอร์จะตัดคำสวยงามพอดี 3 บรรทัด
+     แต่พอ export จริงข้อความจะไหลล้นออกนอกกรอบการ์ด (ตามปัญหาที่พบ) จึงต้องตัดข้อความเป็นสตริงสั้นๆ
+     ไว้ล่วงหน้า ให้ผลลัพธ์เหมือนกันทั้งตอนพรีวิวและตอน export เสมอ */
+  const __truncCache = new Map();
+  function truncateToLines(text, maxLines, widthPx) {
+    if (!text) return "";
+    const key = maxLines + "|" + Math.round(widthPx) + "|" + text;
+    if (__truncCache.has(key)) return __truncCache.get(key);
+    const probe = document.createElement("div");
+    probe.style.cssText = `position:fixed; left:-100000px; top:0; width:${widthPx}px; visibility:hidden; font-size:12px; line-height:1.5; font-family:'IBM Plex Sans Thai',sans-serif; word-break:break-word; overflow-wrap:anywhere; white-space:normal;`;
+    document.body.appendChild(probe);
+    probe.textContent = text;
+    const lineHeight = parseFloat(getComputedStyle(probe).lineHeight) || 18;
+    const maxHeight = lineHeight * maxLines + 1;
+    let result;
+    if (probe.scrollHeight <= maxHeight) {
+      result = escapeHtml(text);
+    } else {
+      // หาความยาวสูงสุดของข้อความ (แบบ binary search) ที่ยังพอดีกับความสูง 3 บรรทัด แล้วเติม "…"
+      let lo = 0, hi = text.length, best = "";
+      while (lo <= hi) {
+        const mid = (lo + hi) >> 1;
+        probe.textContent = text.slice(0, mid) + "…";
+        if (probe.scrollHeight <= maxHeight) { best = text.slice(0, mid) + "…"; lo = mid + 1; }
+        else hi = mid - 1;
+      }
+      result = escapeHtml(best || "…");
+    }
+    document.body.removeChild(probe);
+    __truncCache.set(key, result);
+    return result;
+  }
+
+  const detailCard = (i, idx) => {
+    const accents = ["#22d3ee", "#f59e0b", "#f43f5e", "#22e0a1", "#9d6bff", "#3b9dff"];
+    const ac = accents[idx % accents.length];
+    return `
+      <div style="display:flex; gap:0; border:1px solid ${RP.border}; border-radius:14px; overflow:hidden; background:linear-gradient(160deg,${RP.cardTop},${RP.cardBot}); box-shadow:0 6px 18px rgba(0,0,0,.18);">
+        <div style="width:6px; flex-shrink:0; background:linear-gradient(180deg,${ac},${ac}66);"></div>
+        <div style="flex:1; min-width:0; padding:11px 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">
+            <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
+              <span style="font-family:'Share Tech Mono',monospace; color:${ac}; font-size:15px; font-weight:700;">${escapeHtml(i.time)}</span>
+              <span style="font-size:11px; color:${RP.dim};">${escapeHtml(i.date)}</span>
+              <span style="display:inline-block; padding:1px 9px; border-radius:99px; background:${RP.chipBg}; color:${RP.cyan}; border:1px solid ${RP.border}; font-size:11px;">${escapeHtml(i.floor)}</span>
+            </div>
+            <span style="flex-shrink:0; font-size:11px; color:${RP.dim};">#${idx + 1}</span>
+          </div>
+          <div style="font-size:12px; color:${ac}; font-weight:600; margin-bottom:3px;">${escapeHtml(i.category)} <span style="color:${RP.dim}; font-weight:400;">· ${escapeHtml(i.location)}</span></div>
+          <div style="font-size:12px; color:${RP.text}; line-height:1.5; word-break:break-word; overflow-wrap:anywhere;">${truncateToLines(i.description, 3, DETAIL_CARD_TEXT_WIDTH)}</div>
+          ${i.floorDetail && i.floorDetail !== "—" ? `<div style="font-size:11px; color:${RP.dim}; margin-top:3px;">📍 ${escapeHtml(i.floorDetail)}</div>` : ""}
+        </div>
+      </div>`;
+  };
+
+  /* วัดความสูงจริงของส่วนหัว (strip) + หัวข้อ + ท้ายกระดาษ (footer) ของหน้ารายละเอียด
+     เพื่อคำนวณพื้นที่ว่างที่เหลือไว้สำหรับวางการ์ดอย่างแม่นยำ (ไม่ประมาณค่าคงที่แบบเดิม) */
+  function measureDetailChrome() {
+    const probe = document.createElement("div");
+    probe.style.cssText = `position:fixed; left:-100000px; top:0; width:${PAGE_W}px; font-family:'IBM Plex Sans Thai',sans-serif; visibility:hidden;`;
+    probe.innerHTML = `
+      ${strip("วัดขนาดหน้า")}
+      <div style="padding:16px 30px;">
+        <div id="__meas_title" style="margin-bottom:12px;">${sectionTitle("🗂️", "บันทึกเหตุการณ์ที่นำมาสรุป", "RECORDS")}</div>
+      </div>
+      ${footer(1, 1)}`;
+    document.body.appendChild(probe);
+    const stripH = probe.children[0].offsetHeight;
+    const titleBlockH = probe.querySelector("#__meas_title").offsetHeight + 12; // +margin-bottom ของกล่องหัวข้อ
+    const footerH = probe.children[2].offsetHeight;
+    document.body.removeChild(probe);
+    const CONTENT_PAD_V = 32;  // padding:16px 30px (บน+ล่างรวมกัน) ของกล่องเนื้อหา
+    const SAFETY = 6;          // กันเผื่อ rounding/sub-pixel
+    return PAGE_H - stripH - CONTENT_PAD_V - titleBlockH - footerH - SAFETY;
+  }
+
+  /* จัดหน้ารายละเอียดโดยวัดความสูงจริงของการ์ดแต่ละใบ (ตามความยาวข้อความจริง)
+     แล้วไล่ประกอบเป็นแถว 2 คอลัมน์เหมือน CSS grid จริง จนกว่าจะเต็มพื้นที่ที่วัดได้ -> ขึ้นหน้าใหม่
+     วิธีนี้รับประกันว่าจะไม่มีข้อความหลุดกรอบล่างอีก ไม่ว่าเหตุการณ์จะมีรายละเอียดสั้นหรือยาวแค่ไหน */
+  function paginateDetailRows(rows) {
+    if (!rows.length) return [[]];
+    const availableH = measureDetailChrome();
+
+    // สร้างพื้นที่ทดสอบนอกจอ กว้างเท่าคอลัมน์การ์ดจริง แล้ววัด offsetHeight ของทุกการ์ดในครั้งเดียว (batch)
+    // เพื่อลดจำนวนครั้งที่เบราว์เซอร์ต้องคำนวณ layout ใหม่ (reflow) ให้เหลือน้อยที่สุด
+    const probe = document.createElement("div");
+    probe.style.cssText = `position:fixed; left:-100000px; top:0; width:${PAGE_W - 60}px; visibility:hidden; font-family:'IBM Plex Sans Thai',sans-serif;`;
+    const grid = document.createElement("div");
+    grid.style.cssText = `display:grid; grid-template-columns:1fr 1fr; gap:${DETAIL_GAP}px; width:100%;`;
+    probe.appendChild(grid);
+    document.body.appendChild(probe);
+
+    const cardEls = rows.map((r, idx) => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = detailCard(r, idx);
+      const el = wrap.firstElementChild;
+      grid.appendChild(el);
+      return el;
+    });
+    const heights = cardEls.map(el => el.offsetHeight); // อ่านทั้งหมดหลังต่อ DOM ครบแล้ว (1 reflow)
+    document.body.removeChild(probe);
+
+    // ไล่จัดกลุ่มทีละแถว (row-major เหมือนการไหลของ CSS grid จริง)
+    // ความสูงของแต่ละแถว = ค่ามากสุดของการ์ดในแถวนั้น (เท่ากับพฤติกรรมจริงของ grid)
+    const chunks = [];
+    let current = [];
+    let usedH = 0;
+    for (let i = 0; i < rows.length; i += DETAIL_COLS) {
+      const rowIdxs = [];
+      for (let c = 0; c < DETAIL_COLS && i + c < rows.length; c++) rowIdxs.push(i + c);
+      const rowH = Math.max(...rowIdxs.map(x => heights[x]));
+      const addH = current.length === 0 ? rowH : usedH + DETAIL_GAP + rowH;
+      if (addH > availableH && current.length > 0) {
+        chunks.push(current);
+        current = rowIdxs.map(x => rows[x]);
+        usedH = rowH;
+      } else {
+        current.push(...rowIdxs.map(x => rows[x]));
+        usedH = addH;
+      }
+    }
+    if (current.length) chunks.push(current);
+    if (!chunks.length) chunks.push([]);
+    return chunks;
+  }
+
+  const detailChunks = paginateDetailRows(reportRows);
+  const TOTAL_PAGES = 2 + detailChunks.length;
+
+  const pageWrap = (inner) => {
+    const n = document.createElement("div");
+    n.className = "report-page";
+    n.style.cssText = `width:${PAGE_W}px; height:${PAGE_H}px; background:${RP.bg}; font-family:'IBM Plex Sans Thai',sans-serif; color:${RP.text}; position:relative; overflow:hidden; box-sizing:border-box;`;
+    n.innerHTML = inner;
+    return n;
+  };
+
+  // ---- PAGE 1: ภาพรวม ----
+  const page1 = pageWrap(`
+    ${hero}
+    <div style="padding:18px 30px;">
+      ${kpis}
+      ${emptyBanner}
+      <div style="display:flex; gap:18px; align-items:stretch; height:${emptyBanner ? 300 : 372}px;">
+        <div style="flex:1.25; min-width:0;">
+          ${card(sectionTitle("📈", "การกระจายตามชั้น", "BY FLOOR") + chartsHTML, "height:100%; box-sizing:border-box;", "#22d3ee")}
+        </div>
+        <div style="flex:1; min-width:0;">
+          ${card(sectionTitle("🕒", "ช่วงเวลาที่เกิดเหตุ", "BY TIME") + periodBars, "height:100%; box-sizing:border-box;", "#9d6bff")}
+        </div>
+      </div>
+    </div>
+    ${footer(1, TOTAL_PAGES)}`);
+
+  // ---- PAGE 2: แนวโน้ม & อันดับ & ข้อค้นพบ ----
+  const page2 = pageWrap(`
+    ${strip("แนวโน้ม &amp; การวิเคราะห์ · Trends &amp; Analysis")}
+    <div style="padding:16px 30px;">
+      <div style="display:flex; gap:18px; align-items:stretch; height:268px; margin-bottom:16px;">
+        <div style="flex:1.7; min-width:0;">
+          ${card(sectionTitle("📈", "แนวโน้มรายวัน (จ–อา)", "DAILY TREND") +
+            (trendImg
+              ? `<img src="${trendImg}" style="width:100%; max-height:196px; object-fit:contain; display:block;" crossorigin="anonymous" />`
+              : `<div style="padding:30px; text-align:center; color:${RP.dim}; font-style:italic;">ยังไม่มีข้อมูลกราฟ</div>`), "height:100%; box-sizing:border-box;", "#22d3ee")}
+        </div>
+        <div style="flex:1; min-width:0;">
+          ${card(sectionTitle("📊", "เทียบสัปดาห์ก่อน", "VS LAST WEEK") + cmpHTML, "height:100%; box-sizing:border-box;", "#f43f5e")}
+        </div>
+      </div>
+      <div style="display:flex; gap:18px; align-items:stretch; height:336px;">
+        <div style="flex:1; min-width:0;">
+          ${card(sectionTitle("🏢", "อันดับชั้นเสี่ยง", "FLOOR RANKING") + floorBars, "height:100%; box-sizing:border-box; overflow:hidden;", "#3b9dff")}
+        </div>
+        <div style="flex:1; min-width:0;">
+          ${card(sectionTitle("🩺", "แยกตามอาการ", "BY TYPE") + catBars, "height:100%; box-sizing:border-box; overflow:hidden;", "#22e0a1")}
+        </div>
+        <div style="flex:1.25; min-width:0;">
+          ${card(sectionTitle("💡", "ข้อค้นพบสำคัญ", "KEY INSIGHTS") + `<ul style="list-style:none; padding:0; margin:0;">${insights}</ul>`, "height:100%; box-sizing:border-box; overflow:hidden;", "#f59e0b")}
+        </div>
+      </div>
+    </div>
+    ${footer(2, TOTAL_PAGES)}`);
+
+  // ---- PAGE 3..N: รายละเอียดเหตุการณ์ทั้งหมด ----
+  // หมายเหตุ: แต่ละหน้าอาจมีจำนวนการ์ดไม่เท่ากัน เพราะแบ่งหน้าตามความสูงจริงของเนื้อหา
+  // จึงต้องคำนวณ startIdx จากผลรวมจำนวนการ์ดของหน้าก่อนหน้า แทนการคูณด้วยค่าคงที่แบบเดิม
+  let __runningIdx = 0;
+  const detailPages = detailChunks.map((chunk, pi) => {
+    const startIdx = __runningIdx;
+    __runningIdx += chunk.length;
+    const cardsHTML = chunk.length
+      ? `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; align-content:start;">
+           ${chunk.map((it, k) => detailCard(it, startIdx + k)).join("")}
+         </div>`
+      : `<div style="padding:60px; text-align:center; color:${RP.dim}; font-style:italic; font-size:14px;">ไม่มีเหตุการณ์ในช่วงเวลาที่เลือก</div>`;
+    const subtitle = detailChunks.length > 1
+      ? `รายละเอียดเหตุการณ์ทั้งหมด (ชุดที่ ${pi + 1}/${detailChunks.length}) · Incident Details`
+      : "รายละเอียดเหตุการณ์ทั้งหมด · Incident Details";
+    return pageWrap(`
+      ${strip(escapeHtml(subtitle))}
+      <div style="padding:16px 30px;">
+        <div style="margin-bottom:12px;">${sectionTitle("🗂️", "บันทึกเหตุการณ์ที่นำมาสรุป", "RECORDS " + (startIdx + 1) + "–" + (startIdx + chunk.length) + " / " + reportRows.length)}</div>
+        ${cardsHTML}
+      </div>
+      ${footer(3 + pi, TOTAL_PAGES)}`);
+  });
+
+  return [page1, page2, ...detailPages];
+}
+
+/* เรนเดอร์หน้ารายงาน 1 หน้า (A4 landscape) เป็น canvas */
+async function renderPageCanvas(node) {
+  const host = document.createElement("div");
+  host.style.cssText = "position:fixed; left:-100000px; top:0; z-index:-1; pointer-events:none;";
+  host.appendChild(node);
+  document.body.appendChild(host);
+  try {
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
+    await new Promise(r => setTimeout(r, 90));
+    return await html2canvas(node, {
+      backgroundColor: RP.bg, scale: 2, logging: false, useCORS: true, imageTimeout: 0,
+      width: PAGE_W, height: PAGE_H, windowWidth: PAGE_W,
+    });
+  } finally {
+    document.body.removeChild(host);
+  }
+}
+
+/* สลับธีมรายงาน (มืด/สว่าง/เขียว) แล้วเรนเดอร์พรีวิวใหม่ */
+function setReportTheme(t) {
+  if (!REPORT_THEMES[t]) return;
+  reportTheme = t;
+  RP = REPORT_THEMES[t];
+  try { localStorage.setItem("iacc-report-theme", t); } catch (e) {}
+  highlightReportThemeButtons();
+  // ถ้าพรีวิวเปิดอยู่ ให้สร้างใหม่ตามธีม
+  if ($("report-modal") && $("report-modal").classList.contains("open")) openReportPreview();
+}
+function highlightReportThemeButtons() {
+  [["rt-dark", "dark"], ["rt-light", "light"], ["rt-green", "green"]].forEach(([id, t]) => {
+    const b = $(id); if (b) b.style.color = (t === reportTheme) ? "var(--neon-cyan)" : "var(--text-dim)";
+  });
+}
+
+/* =================================================================
+ *  REPORT PREVIEW MODAL — ดูตัวอย่างก่อนส่งออก (A4 แนวนอน 3 หน้า)
+ * ================================================================= */
+function openReportPreview() {
+  const holder = $("report-preview-holder");
+  if (!holder) return;
+  try {
+    const pages = createReportPages();
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = "width:" + PAGE_W + "px; transform-origin: top left; display:flex; flex-direction:column; gap:22px;";
+    pages.forEach(p => {
+      p.style.boxShadow = "0 10px 36px rgba(0,0,0,.55)";
+      p.style.borderRadius = "10px";
+      wrapper.appendChild(p);
+    });
+    holder.innerHTML = "";
+    holder.appendChild(wrapper);
+    $("report-modal").classList.add("open");
+    highlightReportThemeButtons();
+    requestAnimationFrame(scaleReportPreview);
+    setTimeout(scaleReportPreview, 250);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(scaleReportPreview).catch(() => {}); }
+  } catch (err) {
+    console.error("openReportPreview:", err);
+    showToast("สร้างตัวอย่างรายงานไม่สำเร็จ: " + err.message, "error");
+  }
+}
+function scaleReportPreview() {
+  const scroll = $("report-preview-scroll");
+  const holder = $("report-preview-holder");
+  if (!scroll || !holder || !holder.firstElementChild) return;
+  const wrapper = holder.firstElementChild;
+  const avail = scroll.clientWidth - 36;
+  const scale = Math.min(1, avail / PAGE_W);
+  wrapper.style.transform = `scale(${scale})`;
+  holder.style.width = (PAGE_W * scale) + "px";
+  holder.style.height = (wrapper.offsetHeight * scale) + "px";
+}
+function closeReportModal() {
+  $("report-modal").classList.remove("open");
+  const holder = $("report-preview-holder");
+  if (holder) holder.innerHTML = "";
+}
+
+/* =================================================================
+ *  EXPORT — PNG (แยกไฟล์ตามหน้า ใช้ pipeline การเรนเดอร์เดียวกับ PDF ทุกประการ
+ *  จึงได้จำนวนหน้าและรายละเอียดครบถ้วนตรงกับ PDF เสมอ — ไม่ใช่ภาพต่อกันเป็นแท่งเดียวแบบเดิม)
+ * ================================================================= */
+async function exportPNG() {
+  if (isBusy) return;
+  if (!libReady("html2canvas")) { showToast("ไลบรารี html2canvas โหลดไม่สำเร็จ — ตรวจสอบอินเทอร์เน็ต", "error"); return; }
+  setBusy("btn-dl-png", true, "PNG…");
+  try {
+    const pages = createReportPages();   // pipeline เดียวกับ exportPDF() ทุกหน้า/ทุกรายละเอียด
+    const ts = stamp();
+    for (let i = 0; i < pages.length; i++) {
+      const canvas = await renderPageCanvas(pages[i]);
+      const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+      if (!blob) { showToast(`สร้างภาพหน้า ${i + 1} ไม่สำเร็จ`, "error"); continue; }
+      triggerDownload(blob, `incident_report_page${i + 1}_of_${pages.length}_${ts}.png`);
+      // หน่วงเวลาสั้น ๆ ระหว่างการดาวน์โหลดแต่ละไฟล์ กันเบราว์เซอร์บล็อกการดาวน์โหลดหลายไฟล์พร้อมกัน
+      if (i < pages.length - 1) await new Promise(r => setTimeout(r, 350));
+    }
+    showToast(`ดาวน์โหลดรายงาน PNG สำเร็จ (${pages.length} หน้า · รายละเอียดครบเหมือน PDF)`, "success");
+  } catch (err) {
+    console.error("exportPNG:", err);
+    showToast("สร้างภาพไม่สำเร็จ: " + err.message, "error");
+  } finally {
+    setBusy("btn-dl-png", false);
+  }
+}
+
+/* =================================================================
+ *  EXPORT — PDF (A4 แนวนอน 3 หน้า, หนึ่งหน้าต่อหนึ่งแผ่น)
+ * ================================================================= */
+async function exportPDF() {
+  if (isBusy) return;
+  if (!libReady("jspdf"))       { showToast("ไลบรารี jsPDF โหลดไม่สำเร็จ — ตรวจสอบอินเทอร์เน็ต", "error"); return; }
+  if (!libReady("html2canvas")) { showToast("ไลบรารี html2canvas โหลดไม่สำเร็จ — ตรวจสอบอินเทอร์เน็ต", "error"); return; }
+  setBusy("btn-dl-pdf", true, "PDF…");
+  try {
+    const pages = createReportPages();
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("l", "mm", "a4");           // landscape
+    const pageW = pdf.internal.pageSize.getWidth();   // 297
+    const pageH = pdf.internal.pageSize.getHeight();  // 210
+    for (let i = 0; i < pages.length; i++) {
+      const canvas = await renderPageCanvas(pages[i]);
+      if (i > 0) pdf.addPage("a4", "l");
+      // หน้ามีอัตราส่วน A4 แนวนอนพอดี → วางเต็มแผ่นไม่บิดเบี้ยว
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, pageW, pageH);
+    }
+    pdf.save(`incident_report_${stamp()}.pdf`);
+    showToast("ดาวน์โหลดรายงาน PDF สำเร็จ (A4 แนวนอน 3 หน้า)", "success");
+  } catch (err) {
+    console.error("exportPDF:", err);
+    showToast("สร้าง PDF ไม่สำเร็จ: " + err.message, "error");
+  } finally {
+    setBusy("btn-dl-pdf", false);
+  }
+}
+
+
+/* =================================================================
+ *  WORK ORDER — ใบงานสลักหลัง (PDF รายเหตุการณ์, html2canvas รองรับไทย)
+ * ================================================================= */
+const woLabel = "background:#0a1024;color:#fff;font-size:12px;font-weight:600;padding:9px 12px;width:130px;border:1px solid #0a1024;";
+const woVal   = "padding:9px 12px;border:1px solid #d0d5dd;font-size:14px;color:#101828;";
+
+function buildWorkOrderHTML(rec) {
+  const now = new Date();
+  return `
+    <div style="width:794px; box-sizing:border-box; padding:48px 52px; background:#fff; color:#101828; font-family:'IBM Plex Sans Thai',sans-serif;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid #0a1024; padding-bottom:16px; margin-bottom:24px;">
+        <div>
+          <div style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:22px; color:#0a1024;">INCIDENT REPORT</div>
+          <div style="font-size:13px; color:#667; letter-spacing:.18em; margin-top:2px;">ใบงานบันทึกเหตุการณ์ · COMMAND CENTER</div>
+        </div>
+        <div style="text-align:right; font-size:11px; color:#667;">
+          เลขที่เอกสาร: INC-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}<br/>
+          ออกเอกสาร: ${formatDateDDMMYYYY(now)} ${pad(now.getHours())}:${pad(now.getMinutes())}
+        </div>
+      </div>
+      <table style="width:100%; border-collapse:collapse; margin-bottom:22px; font-size:14px;">
+        <tr><td style="${woLabel}">วันที่เกิดเหตุ</td><td style="${woVal}">${escapeHtml(rec.date)}</td><td style="${woLabel}">เวลา</td><td style="${woVal}">${escapeHtml(rec.time)} น.</td></tr>
+        <tr><td style="${woLabel}">ชั้น</td><td style="${woVal}">${escapeHtml(rec.floor)}</td><td style="${woLabel}">โซน</td><td style="${woVal}">${escapeHtml(rec.floorDetail)}</td></tr>
+        <tr><td style="${woLabel}">ประเภท/อาการ</td><td style="${woVal}" colspan="3">${escapeHtml(rec.category)}</td></tr>
+        <tr><td style="${woLabel}">สถานที่เกิดเหตุ</td><td style="${woVal}" colspan="3">${escapeHtml(rec.location)}</td></tr>
+      </table>
+      <div style="font-size:13px; font-weight:600; color:#0a1024; margin-bottom:6px;">รายละเอียดเหตุการณ์</div>
+      <div style="border:1px solid #d0d5dd; border-radius:8px; padding:14px 16px; min-height:90px; font-size:14px; line-height:1.7; background:#f9fafb; margin-bottom:24px; white-space:pre-wrap; word-break:break-word;">${escapeHtml(rec.description)}</div>
+      <div style="font-size:13px; font-weight:600; color:#0a1024; margin-bottom:6px;">บันทึกการดำเนินการ (สลักหลัง)</div>
+      <div style="border:1px dashed #98a2b3; border-radius:8px; padding:14px 16px; min-height:110px; font-size:13px; color:#667; margin-bottom:30px;">
+        ………………………………………………………………………………………………………………<br/><br/>………………………………………………………………………………………………………………<br/><br/>………………………………………………………………………………………………………………
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:40px; font-size:13px; text-align:center;">
+        <div style="width:30%;"><div style="border-top:1px solid #101828; padding-top:6px;">ผู้บันทึก</div></div>
+        <div style="width:30%;"><div style="border-top:1px solid #101828; padding-top:6px;">หัวหน้าเวร</div></div>
+        <div style="width:30%;"><div style="border-top:1px solid #101828; padding-top:6px;">ผู้จัดการอาคาร</div></div>
+      </div>
+    </div>`;
+}
+
+async function renderWorkOrderToPDF(rec) {
+  if (isBusy) return;
+  if (!libReady("jspdf"))       { showToast("ไลบรารี jsPDF โหลดไม่สำเร็จ — ตรวจสอบอินเทอร์เน็ต", "error"); return; }
+  if (!libReady("html2canvas")) { showToast("ไลบรารี html2canvas โหลดไม่สำเร็จ — ตรวจสอบอินเทอร์เน็ต", "error"); return; }
+
+  const target = $("workorder-render");
+  isBusy = true;
+  showToast("กำลังสร้างใบงานสลักหลัง…", "info");
+  try {
+    target.innerHTML = buildWorkOrderHTML(rec);
+    const node = target.firstElementChild;
+    const canvas = await html2canvas(node, { backgroundColor: "#ffffff", scale: 2, logging: false });
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgW = pageW;
+    const imgH = (canvas.height * imgW) / canvas.width;
+    // ถ้าสูงเกิน A4 ให้ย่อพอดีหน้า (กันล้น)
+    if (imgH <= pageH) {
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, imgW, imgH);
+    } else {
+      const scaledW = (pageH * imgW) / imgH;
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", (pageW - scaledW) / 2, 0, scaledW, pageH);
+    }
+    const safeFloor = String(rec.floor).replace(/[^\u0E00-\u0E7Fa-zA-Z0-9]/g, "_");
+    pdf.save(`workorder_${safeFloor}_${stamp()}.pdf`);
+    showToast("ดาวน์โหลดใบงานสลักหลังสำเร็จ", "success");
+  } catch (err) {
+    console.error("workorder:", err);
+    showToast("สร้างใบงานไม่สำเร็จ: " + err.message, "error");
+  } finally {
+    target.innerHTML = "";
+    isBusy = false;
+  }
+}
+
+function printWorkOrder(id) {
+  const rec = findById(id);
+  if (!rec) { showToast("ไม่พบรายการ (อาจถูกลบไปแล้ว)", "error"); return; }
+  renderWorkOrderToPDF(rec);
+}
+function printWorkOrderFromForm() {
+  if (!validateForm()) return;
+  renderWorkOrderToPDF(readForm());
+}
+
+/* =================================================================
+ *  HELPERS — download / timestamp
+ * ================================================================= */
+function triggerDownload(blob, filename) {
+  try {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (err) {
+    console.error("download:", err);
+    showToast("ดาวน์โหลดไฟล์ไม่สำเร็จ: " + err.message, "error");
+  }
+}
+function stamp() {
+  const d = new Date();
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+}
+
+/* =================================================================
+ *  INIT
+ * ================================================================= */
+function populateFloorOptions() {
+  const formSel = $("f-floor"), filterSel = $("filter-floor");
+  FLOORS.forEach(f => {
+    formSel.insertAdjacentHTML("beforeend", `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`);
+    filterSel.insertAdjacentHTML("beforeend", `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`);
+  });
+  const catSel = $("f-category");
+  if (catSel) CATEGORIES.forEach(c => {
+    catSel.insertAdjacentHTML("beforeend", `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`);
+  });
+  const zoneSel = $("f-floordetail");
+  if (zoneSel) ZONES.forEach(z => {
+    zoneSel.insertAdjacentHTML("beforeend", `<option value="${escapeHtml(z)}">${escapeHtml(z)}</option>`);
+  });
+}
+function prefillToday() {
+  const now = new Date();
+  $("f-date").value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  $("f-time").value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  try {
+    initTheme();
+    try { const rt = localStorage.getItem("iacc-report-theme"); if (rt && REPORT_THEMES[rt]) { reportTheme = rt; RP = REPORT_THEMES[rt]; } } catch (e) {}
+    populateFloorOptions();
+    prefillToday();
+    startClock();
+    loadData();
+
+    // เรียกคืนค่า auto-refresh ที่บันทึกไว้ — ถ้ายังไม่เคยตั้ง ใช้ค่าเริ่มต้น "ทุก 1 นาที"
+    // (เพื่อให้ Command Center เห็นข้อมูลล่าสุดอัตโนมัติตั้งแต่เปิดครั้งแรก)
+    try {
+      const raw = localStorage.getItem("iacc-auto-min");
+      const savedMin = (raw === null) ? 1 : (parseInt(raw, 10) || 0);
+      if (savedMin > 0) setAutoRefresh(savedMin); else { const s = $("auto-refresh"); if (s) s.value = "0"; }
+    } catch (e) { setAutoRefresh(1); }
+
+    // กลับมาที่แท็บ → ดึงข้อมูลทันที (ถ้าเปิด auto-refresh ไว้)
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && autoMinutes > 0 && !isBusy && !isLoading) loadData(true);
+    });
+
+    // ปรับสเกลพรีวิวรายงานเมื่อเปลี่ยนขนาดหน้าจอ/หมุนจอ
+    window.addEventListener("resize", () => { if ($("report-modal") && $("report-modal").classList.contains("open")) scaleReportPreview(); });
+
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeModal(); closeReportModal(); } });
+    // กราฟปรับขนาดตามจอ + รีสเกลพรีวิวรายงานเมื่อ resize (debounce)
+    let rt; window.addEventListener("resize", () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => {
+        if (floorChartBar) floorChartBar.resize();
+        if (floorChartPie) floorChartPie.resize();
+        if ($("report-modal").classList.contains("open")) scaleReportPreview();
+      }, 200);
+    });
+  } catch (err) {
+    console.error("init:", err);
+    showToast("เริ่มต้นระบบผิดพลาด: " + err.message, "error");
+  }
+});
+
+// แจ้งเตือนถ้า CDN ไลบรารีหลักโหลดไม่ครบ (ตรวจหลังโหลดหน้าเสร็จ)
+window.addEventListener("load", () => {
+  const missing = [];
+  if (!libReady("chart")) missing.push("Chart.js");
+  if (!libReady("html2canvas")) missing.push("html2canvas");
+  if (!libReady("jspdf")) missing.push("jsPDF");
+  if (missing.length) showToast("โหลดไลบรารีไม่ครบ: " + missing.join(", ") + " — บางฟังก์ชันอาจใช้ไม่ได้", "error");
+});
+</script>
+
+<script id="brand-splash-script">
+(function () {
+  "use strict";
+  var CFG = {"name": "SBK Command Center", "shortName": "Command", "title": "COMMAND CENTER", "subtitle": "Incident · Accident", "loadingText": "กำลังเข้าสู่ศูนย์บัญชาการ", "lockText": "แตะเพื่อเข้าสู่ระบบ", "theme": "#070b18", "bg": "#070b18", "icon": "<svg viewBox=\"0 0 512 512\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"Command Center\">\n  <defs>\n    <linearGradient id=\"dbBg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#0c1740\"/><stop offset=\".55\" stop-color=\"#0a1230\"/><stop offset=\"1\" stop-color=\"#04060f\"/>\n    </linearGradient>\n    <linearGradient id=\"dbPulse\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\n      <stop offset=\"0\" stop-color=\"#00e5ff\"/><stop offset=\"1\" stop-color=\"#b9fbff\"/>\n    </linearGradient>\n    <radialGradient id=\"dbGlow\" cx=\"50%\" cy=\"42%\" r=\"60%\">\n      <stop offset=\"0\" stop-color=\"#0ea5c9\" stop-opacity=\".55\"/><stop offset=\"1\" stop-color=\"#0ea5c9\" stop-opacity=\"0\"/>\n    </radialGradient>\n    <filter id=\"dbBlur\" x=\"-40%\" y=\"-40%\" width=\"180%\" height=\"180%\">\n      <feGaussianBlur stdDeviation=\"7\" result=\"b\"/><feMerge><feMergeNode in=\"b\"/><feMergeNode in=\"SourceGraphic\"/></feMerge>\n    </filter>\n  </defs>\n  <rect width=\"512\" height=\"512\" rx=\"114\" fill=\"url(#dbBg)\"/>\n  <circle cx=\"256\" cy=\"220\" r=\"220\" fill=\"url(#dbGlow)\"/>\n  <rect x=\"16\" y=\"16\" width=\"480\" height=\"480\" rx=\"100\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".28\" stroke-width=\"3\"/>\n  <circle cx=\"256\" cy=\"256\" r=\"158\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".12\" stroke-width=\"3\"/>\n  <circle cx=\"256\" cy=\"256\" r=\"116\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".10\" stroke-width=\"2\"/>\n  <path d=\"M256 92 L396 148 V270 C396 356 332 410 256 438 C180 410 116 356 116 270 V148 Z\"\n        fill=\"#0a1a3e\" fill-opacity=\".85\" stroke=\"#00e5ff\" stroke-opacity=\".6\" stroke-width=\"6\"/>\n  <path d=\"M146 272 H206 L232 206 L270 338 L300 250 L320 272 H366\" fill=\"none\"\n        stroke=\"url(#dbPulse)\" stroke-width=\"15\" stroke-linecap=\"round\" stroke-linejoin=\"round\" filter=\"url(#dbBlur)\"/>\n  <circle cx=\"372\" cy=\"150\" r=\"19\" fill=\"#ff2d55\" filter=\"url(#dbBlur)\"/>\n</svg>", "idleMs": 60000, "bootMs": 1900, "onEnter": function(){ try{ if(typeof loadData==='function') loadData(true);}catch(e){} }, "isPaused": function(){ return document.body.classList.contains('presenting'); }};
+
+  /* ---------- 1) ไอคอนหน้าจอโฮม (favicon / apple-touch / manifest) ---------- */
+  function svgToDataUri(svg) { return "data:image/svg+xml," + encodeURIComponent(svg); }
+  function setLink(rel, href, extra) {
+    var l = document.createElement("link"); l.rel = rel; l.href = href;
+    if (extra) Object.keys(extra).forEach(function (k) { l.setAttribute(k, extra[k]); });
+    document.head.appendChild(l); return l;
+  }
+  function rasterize(svg, size) { // SVG -> PNG dataURL (สำหรับ iOS/manifest ที่อยากได้ PNG)
+    return new Promise(function (resolve) {
+      try {
+        var img = new Image();
+        img.onload = function () {
+          try {
+            var c = document.createElement("canvas"); c.width = c.height = size;
+            var ctx = c.getContext("2d"); ctx.drawImage(img, 0, 0, size, size);
+            resolve(c.toDataURL("image/png"));
+          } catch (e) { resolve(null); }
+        };
+        img.onerror = function () { resolve(null); };
+        img.src = svgToDataUri(svg);
+      } catch (e) { resolve(null); }
+    });
+  }
+  function installIcons() {
+    try {
+      setLink("icon", svgToDataUri(CFG.icon), { type: "image/svg+xml" });
+      rasterize(CFG.icon, 180).then(function (png180) {
+        if (png180) setLink("apple-touch-icon", png180);
+        return Promise.all([Promise.resolve(png180), rasterize(CFG.icon, 512)]);
+      }).then(function (arr) {
+        var png180 = arr[0], png512 = arr[1];
+        var icons = [];
+        if (png180) icons.push({ src: png180, sizes: "180x180", type: "image/png", purpose: "any maskable" });
+        if (png512) icons.push({ src: png512, sizes: "512x512", type: "image/png", purpose: "any maskable" });
+        icons.push({ src: svgToDataUri(CFG.icon), sizes: "any", type: "image/svg+xml" });
+        var manifest = {
+          name: CFG.name, short_name: CFG.shortName, start_url: ".",
+          display: "standalone", background_color: CFG.bg, theme_color: CFG.theme, icons: icons
+        };
+        var blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+        setLink("manifest", URL.createObjectURL(blob));
+      });
+    } catch (e) { /* ไอคอนล้มเหลวไม่กระทบการทำงานหลัก */ }
+  }
+
+  /* ---------- 2) หน้าจอโลโก้ (splash) + ระบบล็อกเมื่อไม่ใช้งาน ---------- */
+  var el, IDLE_MS = CFG.idleMs || 60000, idleTimer = null, mode = "boot", raf = null, lastMove = 0;
+
+  function build() {
+    el = document.createElement("div");
+    el.id = "brand-splash";
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-label", CFG.name);
+    el.innerHTML =
+      '<div class="brand-stage">' +
+        '<div class="brand-logo-wrap"><span class="brand-ring"></span>' +
+          '<div class="brand-logo">' + CFG.icon + '</div>' +
+        '</div>' +
+        '<div class="brand-text">' +
+          '<div class="brand-title">' + CFG.title + '</div>' +
+          '<div class="brand-sub">' + CFG.subtitle + '</div>' +
+          '<div style="margin-top:16px">' +
+            '<span class="brand-hint loading"><span class="brand-dots"><i></i><i></i><i></i></span> ' + (CFG.loadingText || "กำลังเข้าสู่ระบบ") + '</span>' +
+            '<span class="brand-hint boot"><i class="fa-solid fa-hand-pointer"></i> ' + (CFG.lockText || "แตะเพื่อเข้าสู่ระบบ") + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(el);
+    el.addEventListener("pointerdown", function () { if (mode === "lock") enter(); });
+    el.addEventListener("keydown", function () { if (mode === "lock") enter(); });
+  }
+
+  function showSplash(kind) {
+    mode = kind;
+    el.classList.toggle("locked", kind === "lock");
+    el.classList.add("show");
+    // ล็อกการเลื่อนพื้นหลังขณะแสดง splash (ซ่อนข้อมูล = ความเป็นส่วนตัว)
+    document.documentElement.style.overflow = "hidden";
+  }
+  function hideSplash() {
+    el.classList.remove("show");
+    document.documentElement.style.overflow = "";
+  }
+
+  function enter() {           // ออกจาก splash เข้าโปรแกรม แล้วเริ่มจับเวลา idle ใหม่
+    hideSplash();
+    mode = "app";
+    if (typeof CFG.onEnter === "function") { try { CFG.onEnter(); } catch (e) {} }
+    armIdle();
+  }
+
+  function paused() { try { return !!(CFG.isPaused && CFG.isPaused()); } catch (e) { return false; } }
+
+  function armIdle() {
+    clearTimeout(idleTimer);
+    if (paused()) { return; }   // เช่น โหมดนำเสนอเต็มจอ — ไม่ล็อก
+    idleTimer = setTimeout(function () {
+      if (mode !== "app") return;
+      if (paused()) { armIdle(); return; }
+      showSplash("lock");       // กลับ "หน้าแรก" อัตโนมัติเมื่อไม่ใช้งานครบเวลา
+    }, IDLE_MS);
+  }
+
+  function onActivity() {       // มีการใช้งาน = รีเซ็ตตัวจับเวลา (เฉพาะตอนอยู่ในแอป)
+    if (mode !== "app") return;
+    armIdle();
+  }
+  function onMove() {
+    var now = Date.now();
+    if (now - lastMove < 1500) return;   // throttle mousemove ลดภาระ CPU
+    lastMove = now; onActivity();
+  }
+
+  function bindActivity() {
+    ["pointerdown", "keydown", "wheel", "touchstart", "scroll", "click"].forEach(function (ev) {
+      window.addEventListener(ev, onActivity, { passive: true });
+    });
+    window.addEventListener("mousemove", onMove, { passive: true });
+    // สลับแท็บกลับมา ให้ถือว่ามีการใช้งาน
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) onActivity(); });
+  }
+
+  function boot() {
+    build();
+    installIcons();
+    bindActivity();
+    // แสดง "แค่หน้าโลโก้" ค้างไว้ก่อนเสมอ — ไม่โชว์ข้อมูลจนกว่าผู้ใช้จะแตะ/กดเข้าสู่ระบบ
+    // (ความเป็นส่วนตัว: ข้อมูลจะไม่ปรากฏเองโดยอัตโนมัติ)
+    showSplash("lock");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+
+  // เผื่ออยากเรียกล็อกเองจากภายนอก
+  window.__brandLock = function () { if (mode === "app") showSplash("lock"); };
+})();
+</script>
+</body>
+</html>
