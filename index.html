@@ -321,6 +321,7 @@
     text-transform: uppercase; font-weight: 600; border-radius: 11px; padding: 12px 18px;
     cursor: pointer; border: 1px solid transparent; transition: all .22s ease;
     display: inline-flex; align-items: center; justify-content: center; gap: 8px; user-select: none;
+    white-space: nowrap; /* กันปุ่มตัดคำกลางคำเวลาโดนบีบพื้นที่ (เช่น "สัปดาห์นี้" แตกเป็น 2 บรรทัด) */
   }
   .btn-cyan  { color: #001016; background: linear-gradient(120deg, var(--neon-cyan) 0%, var(--accent-blue) 55%, var(--accent-violet) 110%); }
   .btn-cyan:hover  { box-shadow: 0 6px 26px -4px var(--accent-blue), 0 0 22px rgba(34,230,255,0.45); transform: translateY(-2px); }
@@ -532,6 +533,93 @@
     #brand-splash *, #brand-splash::before { animation: none !important; }
   }
 </style>
+
+<style id="responsive-suite">
+  /* ==========================================================
+     RESPONSIVE SUITE — Mobile / Tablet / Laptop / Desktop
+     รองรับ Android + iOS (จอบาก, แถบ URL ยืดหด, แนวนอน)
+     ========================================================== */
+
+  /* --- 1) Safe Area: หน้านี้ตั้ง viewport-fit=cover ซึ่ง "ดัน" เนื้อหาเข้าไปใต้รอยบาก/มุมโค้ง
+         ถ้าไม่เผื่อ safe-area ไว้ ข้อความริมขอบ (โดยเฉพาะหัวข้อบนสุด) จะโดนแถบสถานะ/รอยบากบังทับ
+         ใส่ fallback เผื่อกรณี WebView ไม่รองรับ env() เต็มรูปแบบ ก็ยังมีระยะห่างขั้นต่ำเสมอ --- */
+  .max-w-\[1575px\] {
+    padding-top: calc(1.1rem + env(safe-area-inset-top, 22px));
+    padding-left: calc(1rem + env(safe-area-inset-left));
+    padding-right: calc(1rem + env(safe-area-inset-right));
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 640px) {
+    .max-w-\[1575px\] {
+      padding-left: calc(1.5rem + env(safe-area-inset-left));
+      padding-right: calc(1.5rem + env(safe-area-inset-right));
+    }
+  }
+  #present-exit { top: calc(14px + env(safe-area-inset-top)); right: calc(14px + env(safe-area-inset-right)); }
+
+  /* --- 2) ความสูงจอจริงบนมือถือ: 100vh ไม่หดตามแถบ URL ทำให้เนื้อหาล้น/ตกขอบ
+         dvh = ความสูงที่มองเห็นจริง (รองรับ iOS 16+/Chrome 108+) --- */
+  .min-h-screen { min-height: 100vh; }
+  @supports (height: 100dvh) { .min-h-screen { min-height: 100dvh; } }
+
+  /* --- 3) กันเลื่อนแนวนอนหลุด และกัน pull-to-refresh เด้งตอนเลื่อนตาราง --- */
+  html, body { max-width: 100%; overflow-x: hidden; overscroll-behavior-y: contain; }
+  .table-scroll, .overflow-auto, .overflow-x-auto { overscroll-behavior: contain; }
+
+  /* --- 4) ขนาดพื้นที่แตะ: iOS HIG 44px / Android Material 48dp
+         ปุ่มเล็กเกินจะกดพลาดบนจอสัมผัส (ใช้เฉพาะอุปกรณ์สัมผัส ไม่กระทบเมาส์) --- */
+  @media (hover: none) and (pointer: coarse) {
+    .btn, button, .cy-select, select, .theme-toggle { min-height: 44px; }
+    .btn { padding-top: 10px; padding-bottom: 10px; }
+    /* iOS จะซูมอัตโนมัติถ้าฟอนต์ช่องกรอก < 16px — บังคับ 16px กันจอกระโดด */
+    input, select, textarea { font-size: 16px !important; }
+    a, button, .btn { -webkit-tap-highlight-color: rgba(34,211,238,.15); }
+  }
+
+  /* --- 5) มือถือแนวนอน (จอเตี้ย): บีบส่วนหัว/กราฟ ไม่ให้กินพื้นที่จนไม่เหลือข้อมูล --- */
+  @media (max-height: 500px) and (orientation: landscape) {
+    header.glass { padding-top: .75rem !important; padding-bottom: .75rem !important; }
+    .chart-h { height: 240px; }
+    .kpi-num { font-size: 2rem !important; }
+    #analytics-cards { margin-bottom: .9rem; }
+    .table-scroll { max-height: 320px; }
+  }
+
+  /* --- 6) แท็บเล็ตแนวตั้ง (iPad ~768–1023px): กราฟ 1 คอลัมน์กว้างเกินไป
+         ให้เป็น 2 คอลัมน์ โดยกราฟแท่ง (ตัวหลัก) กินเต็มแถวบน
+         หมายเหตุ: ต้องกัน "มือถือแนวนอน" (เช่น 852×393) ไม่ให้เข้าเงื่อนไขนี้ด้วย
+         เพราะกว้างเข้าช่วงเดียวกันแต่จอเตี้ยมาก — ใช้ min-height คัดออก --- */
+  @media (min-width: 768px) and (max-width: 1023px) and (min-height: 501px) {
+    #chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #chart-grid > .chart-box:first-child { grid-column: 1 / -1; }
+    .chart-h { height: 320px; }
+  }
+
+  /* --- 7) จอใหญ่พิเศษ (>1600px): ขยายพื้นที่อ่านและกราฟให้สมส่วน ไม่ปล่อยขอบว่างมาก --- */
+  @media (min-width: 1600px) {
+    .max-w-\[1575px\] { max-width: 1800px; }
+    .chart-h { height: 430px; }
+    .table-scroll { max-height: 820px; }
+  }
+  @media (min-width: 1920px) {
+    .max-w-\[1575px\] { max-width: 2000px; }
+    .kpi-num { font-size: 3rem !important; }
+  }
+
+  /* --- 8) จอเล็กมาก (<360px เช่น iPhone SE): กันหัวข้อ/ปุ่มดันจนล้น --- */
+  @media (max-width: 360px) {
+    .max-w-\[1575px\] { padding-left: calc(.75rem + env(safe-area-inset-left)); padding-right: calc(.75rem + env(safe-area-inset-right)); }
+    .btn { font-size: .8rem; padding-left: 10px; padding-right: 10px; }
+    .chart-box { padding: 10px 11px 12px; }
+    .chart-h { height: 260px; }
+  }
+
+  /* --- 9) พิมพ์/บันทึกหน้าเว็บ: ซ่อนปุ่มควบคุม ให้ได้เนื้อหาล้วน --- */
+  @media print {
+    .no-present, .btn, #present-exit, #brand-splash { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+  }
+</style>
 </head>
 
 <body class="min-h-screen">
@@ -560,39 +648,81 @@
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-3 sm:gap-4">
-        <div class="glass px-4 py-2.5 flex items-center gap-3" style="border-radius:13px">
-          <i class="fa-regular fa-clock text-cyan"></i>
-          <div class="text-right">
-            <div id="clock-time" class="font-mono text-cyan text-lg sm:text-xl leading-none">--:--:--</div>
-            <div id="clock-date" class="font-mono text-dim text-[0.6rem] sm:text-[0.65rem] mt-1">--/--/----</div>
+      <div id="header-controls" class="flex flex-wrap items-center gap-3 sm:gap-4">
+        <div class="hdr-cluster hdr-cluster--info">
+          <div class="glass px-4 py-2.5 flex items-center gap-3" style="border-radius:13px">
+            <i class="fa-regular fa-clock text-cyan"></i>
+            <div class="text-right">
+              <div id="clock-time" class="font-mono text-cyan text-lg sm:text-xl leading-none">--:--:--</div>
+              <div id="clock-date" class="font-mono text-dim text-[0.6rem] sm:text-[0.65rem] mt-1">--/--/----</div>
+            </div>
+          </div>
+          <div class="glass px-4 py-2.5 flex items-center gap-2.5" style="border-radius:13px">
+            <span id="status-dot" class="status-dot loading"></span>
+            <div class="leading-tight">
+              <div class="font-display text-[0.6rem] tracking-widest text-dim">GOOGLE&nbsp;SHEETS</div>
+              <div id="status-text" class="font-mono text-xs text-warn">CONNECTING…</div>
+            </div>
           </div>
         </div>
-        <div class="glass px-4 py-2.5 flex items-center gap-2.5" style="border-radius:13px">
-          <span id="status-dot" class="status-dot loading"></span>
-          <div class="leading-tight">
-            <div class="font-display text-[0.6rem] tracking-widest text-dim">GOOGLE&nbsp;SHEETS</div>
-            <div id="status-text" class="font-mono text-xs text-warn">CONNECTING…</div>
-          </div>
+
+        <div class="hdr-cluster hdr-cluster--settings">
+          <!-- Theme toggle -->
+          <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="สลับโหมดมืด / สว่าง" aria-label="สลับธีม">
+            <span class="knob"><i id="theme-icon" class="fa-solid fa-moon"></i></span>
+          </button>
+          <select id="auto-refresh" onchange="setAutoRefresh(this.value)" class="cy-select" style="width:auto; padding:8px 10px; font-size:.78rem" title="อัปเดตอัตโนมัติ">
+            <option value="0">⏱️ อัปเดตเอง</option>
+            <option value="1">🔄 ทุก 1 นาที</option>
+            <option value="2">🔄 ทุก 2 นาที</option>
+            <option value="5">🔄 ทุก 5 นาที</option>
+            <option value="10">🔄 ทุก 10 นาที</option>
+          </select>
+          <span id="last-updated" class="text-dim" style="font-size:.72rem; white-space:nowrap"></span>
         </div>
-        <!-- Theme toggle -->
-        <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="สลับโหมดมืด / สว่าง" aria-label="สลับธีม">
-          <span class="knob"><i id="theme-icon" class="fa-solid fa-moon"></i></span>
-        </button>
-        <select id="auto-refresh" onchange="setAutoRefresh(this.value)" class="cy-select" style="width:auto; padding:8px 10px; font-size:.78rem" title="อัปเดตอัตโนมัติ">
-          <option value="0">⏱️ อัปเดตเอง</option>
-          <option value="1">🔄 ทุก 1 นาที</option>
-          <option value="2">🔄 ทุก 2 นาที</option>
-          <option value="5">🔄 ทุก 5 นาที</option>
-          <option value="10">🔄 ทุก 10 นาที</option>
-        </select>
-        <span id="last-updated" class="text-dim" style="font-size:.72rem; white-space:nowrap"></span>
-        <button onclick="testConnection()" class="btn btn-ghost no-present" title="ทดสอบการเชื่อมต่อ Google Sheets (เปิดแท็บใหม่)"><i class="fa-solid fa-plug-circle-check"></i></button>
-        <button onclick="loadData()" class="btn btn-ghost" title="ดึงข้อมูลล่าสุด"><i class="fa-solid fa-rotate"></i></button>
-        <button id="btn-present" onclick="togglePresentation()" class="btn btn-cyan" title="โหมดนำเสนอเต็มจอ (ขึ้นจอ Command Center)"><i class="fa-solid fa-expand"></i> <span class="present-label">นำเสนอ</span></button>
+
+        <div class="hdr-cluster hdr-cluster--actions">
+          <button onclick="testConnection()" class="btn btn-ghost no-present" title="ทดสอบการเชื่อมต่อ Google Sheets (เปิดแท็บใหม่)"><i class="fa-solid fa-plug-circle-check"></i></button>
+          <button onclick="loadData()" class="btn btn-ghost" title="ดึงข้อมูลล่าสุด"><i class="fa-solid fa-rotate"></i></button>
+          <button id="btn-present" onclick="togglePresentation()" class="btn btn-cyan" title="โหมดนำเสนอเต็มจอ (ขึ้นจอ Command Center)"><i class="fa-solid fa-expand"></i> <span class="present-label">นำเสนอ</span></button>
+        </div>
       </div>
     </div>
   </header>
+
+  <style id="layout-polish">
+    /* ==========================================================
+       LAYOUT POLISH — จัดกลุ่มปุ่ม/การ์ดในส่วนหัวให้เป็นระเบียบ
+       (เดิมปล่อยให้ flex-wrap อิสระ ทำให้ล้นบรรทัดมั่วบนจอแคบ)
+       ========================================================== */
+    #header-controls { width: 100%; }
+    .hdr-cluster { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+    .hdr-cluster--info { flex: 1 1 auto; }
+    @media (max-width: 1023px) {
+      #header-controls { flex-direction: column; align-items: stretch; gap: .65rem; }
+      .hdr-cluster { width: 100%; }
+      .hdr-cluster--info { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+      .hdr-cluster--info > .glass { width: 100%; justify-content: center; }
+      .hdr-cluster--settings { justify-content: space-between; }
+      .hdr-cluster--settings #auto-refresh { flex: 1 1 auto; }
+      .hdr-cluster--actions { display: grid; grid-template-columns: auto auto 1fr; gap: .5rem; }
+      .hdr-cluster--actions .btn { width: 100%; }
+    }
+    @media (max-width: 480px) {
+      .hdr-cluster--info { grid-template-columns: 1fr; }
+    }
+    /* แถบ "ช่วงเวลารายงาน": จัดเป็นกริดแทน flex-wrap อิสระ กันปุ่ม/ป้ายล้นบรรทัดมั่ว */
+    @media (max-width: 1023px) {
+      .range-bar { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+      #week-nav { width: 100%; flex-direction: column; align-items: stretch; gap: .5rem; }
+      #week-nav .wknav-row { display: flex; align-items: center; justify-content: center; gap: .5rem; }
+      #week-nav .wknav-today { width: 100%; }
+      #range-pick { width: 100%; }
+      #range-pick input.cy-input { flex: 1 1 0; width: auto; }
+      .rr-actions { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+      .rr-actions #range-summary { grid-column: 1 / -1; text-align: center; padding-top: 2px; padding-bottom: 2px; }
+    }
+  </style>
 
   <!-- DATE RANGE FILTER -->
   <section class="glass reveal p-4 sm:p-5 mb-6" style="animation-delay:.04s">
@@ -610,10 +740,12 @@
 
       <!-- week navigation -->
       <div id="week-nav" class="flex items-center gap-2" style="display:none">
-        <button class="icon-btn" onclick="shiftWeek(-1)" title="สัปดาห์ก่อนหน้า"><i class="fa-solid fa-chevron-left"></i></button>
-        <span id="week-label" class="font-mono text-cyan text-sm whitespace-nowrap">—</span>
-        <button class="icon-btn" onclick="shiftWeek(1)" title="สัปดาห์ถัดไป"><i class="fa-solid fa-chevron-right"></i></button>
-        <button class="btn btn-ghost" style="padding:6px 12px" onclick="thisWeek()">สัปดาห์นี้</button>
+        <div class="wknav-row">
+          <button class="icon-btn" onclick="shiftWeek(-1)" title="สัปดาห์ก่อนหน้า"><i class="fa-solid fa-chevron-left"></i></button>
+          <span id="week-label" class="font-mono text-cyan text-sm whitespace-nowrap">—</span>
+          <button class="icon-btn" onclick="shiftWeek(1)" title="สัปดาห์ถัดไป"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <button class="btn btn-ghost wknav-today" style="padding:6px 12px" onclick="thisWeek()">สัปดาห์นี้</button>
       </div>
 
       <!-- custom range -->
@@ -623,7 +755,7 @@
         <input type="date" id="range-to" class="cy-input" style="width:auto" onchange="applyCustomRange()" />
       </div>
 
-      <div class="flex items-center gap-2 flex-wrap lg:ml-auto">
+      <div class="flex items-center gap-2 flex-wrap lg:ml-auto rr-actions">
         <span class="floor-chip" id="range-summary">แสดงทั้งหมด</span>
         <button id="btn-summary" onclick="copyExecutiveSummary()" class="btn btn-ghost" style="padding:8px 13px" title="คัดลอกบทสรุปผู้บริหารสำหรับนำเสนอ"><i class="fa-solid fa-clipboard"></i> สรุป</button>
         <button id="btn-csv" onclick="exportCSV()" class="btn btn-ghost" style="padding:8px 13px" title="ดาวน์โหลด CSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
