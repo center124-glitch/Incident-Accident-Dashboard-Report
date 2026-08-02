@@ -109,44 +109,46 @@
   /* ---------- DARK THEME (default) — Premium Navy & Gold ---------- */
   :root,
   [data-theme="dark"] {
-    --bg-deep:      #070d1c;
-    --bg-panel:     #0e1c38;
-    --glass:        rgba(16, 30, 60, 0.58);
-    --glass-border: rgba(212, 175, 55, 0.22);
-    --thead-bg:     rgba(9, 16, 34, 0.94);
+    /* โทนมืดปรับให้ "สว่างขึ้น ~30%" — ยกค่าความสว่างของพื้นหลัง/พาเนล/เส้นขอบขึ้น
+       ยังคงเอกลักษณ์กรมท่า+ทองเดิม แต่อ่านง่ายขึ้นและไม่ทึบจนดูอึดอัด */
+    --bg-deep:      #0d1528;   /* เดิม #070d1c */
+    --bg-panel:     #16264a;   /* เดิม #0e1c38 */
+    --glass:        rgba(28, 48, 88, 0.62);   /* สว่างขึ้น + ทึบขึ้นเล็กน้อยให้คอนทราสต์กับพื้น */
+    --glass-border: rgba(212, 175, 55, 0.30);
+    --thead-bg:     rgba(20, 32, 60, 0.94);
 
-    --neon-cyan:    #ecc56a;   /* แอคเซนต์หลัก = ทอง */
-    --neon-cyan-d:  #c9a23f;
-    --accent-blue:   #5b8def;
-    --accent-violet: #8ea8e8;
-    --accent-magenta:#e9c46a;
-    --emergency:    #ff5d73;
-    --warning:      #f2b950;
-    --success:      #34d6a4;
+    --neon-cyan:    #f0cf7c;   /* แอคเซนต์หลัก = ทอง (สว่างขึ้น) */
+    --neon-cyan-d:  #d4ad4d;
+    --accent-blue:   #6f9cf2;
+    --accent-violet: #9db5ec;
+    --accent-magenta:#eecb78;
+    --emergency:    #ff6f83;
+    --warning:      #f5c264;
+    --success:      #46dcaf;
 
-    --text:         #e9eefb;
+    --text:         #eef2fc;
     --text-strong:  #ffffff;
-    --text-dim:     #93a3c8;
+    --text-dim:     #a8b7d8;   /* สว่างขึ้นให้อ่านง่ายบนพื้นที่สว่างขึ้น */
 
-    --input-bg:     rgba(9,18,40,0.7);
-    --input-bg-focus: rgba(12,22,48,0.96);
-    --grid:         rgba(120,150,220,0.06);
-    --export-bg:    #070d1c;
-    --chart-grid:   rgba(150,170,220,0.10);
-    --chart-tick:   #93a3c8;
-    --chart-border: #070d1c;
-    --chip-bg:      rgba(236,197,106,0.14);
+    --input-bg:     rgba(20, 34, 66, 0.72);
+    --input-bg-focus: rgba(26, 44, 82, 0.96);
+    --grid:         rgba(140,170,235,0.08);
+    --export-bg:    #0d1528;
+    --chart-grid:   rgba(160,185,235,0.14);
+    --chart-tick:   #a8b7d8;
+    --chart-border: #0d1528;
+    --chip-bg:      rgba(240,207,124,0.16);
 
-    --accent-line:  linear-gradient(90deg, transparent, var(--accent-blue) 22%, var(--neon-cyan) 55%, #f4dd9a 75%, transparent);
-    --glow:         rgba(236,197,106,0.26);
-    --shadow:       rgba(0,0,0,0.5);
+    --accent-line:  linear-gradient(90deg, transparent, var(--accent-blue) 22%, var(--neon-cyan) 55%, #f7e3a8 75%, transparent);
+    --glow:         rgba(240,207,124,0.28);
+    --shadow:       rgba(0,0,0,0.42);
 
     --body-bg:
-      radial-gradient(820px 560px at 8% -6%, rgba(91,141,239,0.16), transparent 60%),
-      radial-gradient(760px 600px at 94% 2%, rgba(236,197,106,0.14), transparent 58%),
-      radial-gradient(700px 560px at 90% 98%, rgba(91,141,239,0.12), transparent 60%),
-      radial-gradient(720px 620px at 14% 108%, rgba(236,197,106,0.08), transparent 60%),
-      linear-gradient(180deg, #070d1c 0%, #0a1530 55%, #060a18 100%);
+      radial-gradient(820px 560px at 8% -6%, rgba(111,156,242,0.18), transparent 60%),
+      radial-gradient(760px 600px at 94% 2%, rgba(240,207,124,0.15), transparent 58%),
+      radial-gradient(700px 560px at 90% 98%, rgba(111,156,242,0.14), transparent 60%),
+      radial-gradient(720px 620px at 14% 108%, rgba(240,207,124,0.09), transparent 60%),
+      linear-gradient(180deg, #0d1528 0%, #142244 55%, #0b1224 100%);
   }
 
   /* ---------- LIGHT THEME — Peach & Pastel Green (ส้มอ่อน-เขียวพาสเทล) ---------- */
@@ -711,7 +713,51 @@
     @media (max-width: 480px) {
       .hdr-cluster--info { grid-template-columns: 1fr; }
     }
-    /* แถบ "ช่วงเวลารายงาน": จัดเป็นกริดแทน flex-wrap อิสระ กันปุ่ม/ป้ายล้นบรรทัดมั่ว */
+    /* ==========================================================
+       MOBILE INFORMATION PRIORITY
+       ปัญหาเดิม: บนมือถือผู้ใช้ต้องเลื่อนผ่านเมนูควบคุมเกือบ 2 หน้าจอ
+       กว่าจะเห็น "ยอดรวมเหตุการณ์" ซึ่งเป็นข้อมูลสำคัญที่สุด
+       แก้โดย: ทำให้ตัวเลข KPI ขึ้นก่อน แล้วยุบเมนูควบคุมเป็นแบบ "พับได้"
+       ใช้ CSS order บน flex container จึงไม่ต้องแก้ DOM/JS เดิมเลย
+       ========================================================== */
+    #ctrl-toggle { display: none; }
+    @media (max-width: 1023px) {
+      .max-w-\[1575px\] { display: flex; flex-direction: column; }
+      /* ลำดับใหม่บนมือถือ: หัวข้อ(แบรนด์) → ตัวเลข KPI → ปุ่มเปิดเมนู → เมนูควบคุม → ที่เหลือ */
+      header.glass      { order: 1; }
+      #ctrl-toggle      { order: 2; display: flex; }
+      #analytics-cards  { order: 3; }
+      #range-section    { order: 4; }
+      .max-w-\[1575px\] > *:not(header):not(#ctrl-toggle):not(#analytics-cards):not(#range-section) { order: 5; }
+
+      /* ส่วนหัว: บนมือถือให้เหลือแค่ "แบรนด์ + สถานะ" — ที่เหลือย้ายไปอยู่ในเมนูพับ */
+      #header-controls { display: none; }
+      header.glass.ctrl-open #header-controls { display: flex; }
+      #range-section { display: none; }
+      #range-section.ctrl-open { display: block; }
+
+      /* ปุ่มสลับเปิด/ปิดเมนูควบคุม */
+      #ctrl-toggle {
+        align-items: center; justify-content: center; gap: 10px;
+        width: 100%; margin-bottom: 1rem; padding: 11px 16px;
+        border-radius: 12px; cursor: pointer;
+        font-family: 'Orbitron', sans-serif; font-size: .76rem; font-weight: 700;
+        letter-spacing: .08em; text-transform: uppercase;
+        color: var(--neon-cyan); background: var(--chip-bg);
+        border: 1px solid var(--glass-border);
+      }
+      #ctrl-toggle .chev { transition: transform .25s ease; }
+      #ctrl-toggle.open .chev { transform: rotate(180deg); }
+
+      /* KPI: บนมือถือทำให้อ่านยอดได้ทันทีแบบกระชับ (2 คอลัมน์ ไม่สูงเกินจอ) */
+      #analytics-cards { grid-template-columns: repeat(2, minmax(0,1fr)); gap: .75rem; margin-bottom: 1rem; }
+      #analytics-cards > div { min-height: 0; padding: 14px 14px !important; }
+      .kpi-num { font-size: 1.85rem !important; }
+      .kpi-title { font-size: .68rem; }
+    }
+    @media (max-width: 420px) {
+      #analytics-cards { grid-template-columns: 1fr; }
+    }
     @media (max-width: 1023px) {
       .range-bar { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
       #week-nav { width: 100%; flex-direction: column; align-items: stretch; gap: .5rem; }
@@ -724,8 +770,15 @@
     }
   </style>
 
+  <!-- ปุ่มเปิด/ปิดเมนูควบคุม (แสดงเฉพาะมือถือ/แท็บเล็ต) -->
+  <button id="ctrl-toggle" onclick="toggleControls()" aria-expanded="false">
+    <i class="fa-solid fa-sliders"></i>
+    <span id="ctrl-toggle-text">ตัวกรอง / เมนูควบคุม</span>
+    <i class="fa-solid fa-chevron-down chev"></i>
+  </button>
+
   <!-- DATE RANGE FILTER -->
-  <section class="glass reveal p-4 sm:p-5 mb-6" style="animation-delay:.04s">
+  <section id="range-section" class="glass reveal p-4 sm:p-5 mb-6" style="animation-delay:.04s">
     <div class="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 flex-wrap">
       <div class="flex items-center gap-2.5">
         <i class="fa-solid fa-calendar-week text-cyan"></i>
@@ -735,6 +788,8 @@
       <div class="range-bar flex gap-2 flex-wrap">
         <button id="rmode-all"   onclick="setRangeMode('all')"   class="btn btn-cyan"  style="padding:8px 14px"><i class="fa-solid fa-infinity"></i> ทั้งหมด</button>
         <button id="rmode-week"  onclick="setRangeMode('week')"  class="btn btn-ghost" style="padding:8px 14px"><i class="fa-solid fa-calendar-week"></i> รายสัปดาห์</button>
+        <button id="rmode-month" onclick="setRangeMode('month')" class="btn btn-ghost" style="padding:8px 14px"><i class="fa-solid fa-calendar-days"></i> รายเดือน</button>
+        <button id="rmode-year"  onclick="setRangeMode('year')"  class="btn btn-ghost" style="padding:8px 14px"><i class="fa-solid fa-calendar"></i> รายปี</button>
         <button id="rmode-range" onclick="setRangeMode('range')" class="btn btn-ghost" style="padding:8px 14px"><i class="fa-solid fa-calendar-days"></i> เลือกช่วง</button>
       </div>
 
@@ -746,6 +801,26 @@
           <button class="icon-btn" onclick="shiftWeek(1)" title="สัปดาห์ถัดไป"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
         <button class="btn btn-ghost wknav-today" style="padding:6px 12px" onclick="thisWeek()">สัปดาห์นี้</button>
+      </div>
+
+      <!-- month navigation -->
+      <div id="month-nav" class="flex items-center gap-2" style="display:none">
+        <div class="wknav-row">
+          <button class="icon-btn" onclick="shiftMonth(-1)" title="เดือนก่อนหน้า"><i class="fa-solid fa-chevron-left"></i></button>
+          <span id="month-label" class="font-mono text-cyan text-sm whitespace-nowrap">—</span>
+          <button class="icon-btn" onclick="shiftMonth(1)" title="เดือนถัดไป"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <button class="btn btn-ghost wknav-today" style="padding:6px 12px" onclick="thisMonth()">เดือนนี้</button>
+      </div>
+
+      <!-- year navigation -->
+      <div id="year-nav" class="flex items-center gap-2" style="display:none">
+        <div class="wknav-row">
+          <button class="icon-btn" onclick="shiftYear(-1)" title="ปีก่อนหน้า"><i class="fa-solid fa-chevron-left"></i></button>
+          <span id="year-label" class="font-mono text-cyan text-sm whitespace-nowrap">—</span>
+          <button class="icon-btn" onclick="shiftYear(1)" title="ปีถัดไป"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <button class="btn btn-ghost wknav-today" style="padding:6px 12px" onclick="thisYear()">ปีนี้</button>
       </div>
 
       <!-- custom range -->
@@ -1030,7 +1105,7 @@ let autoMinutes = 0;    // 0 = ปิด
 /* ตัวกรองช่วงเวลารายงาน
  * mode: 'all' | 'week' | 'range'
  * fromKey/toKey: เลขเปรียบเทียบ yyyymmdd (null = ไม่จำกัด) */
-let dateFilter = { mode: "all", weekOffset: 0, fromKey: null, toKey: null };
+let dateFilter = { mode: "all", weekOffset: 0, monthOffset: 0, yearOffset: 0, fromKey: null, toKey: null };
 
 /* =================================================================
  *  SAFE DOM HELPER
@@ -1586,19 +1661,40 @@ async function submitForm() {
 /* =================================================================
  *  DATE RANGE CONTROLS
  * ================================================================= */
+/* เปิด/ปิดเมนูควบคุมบนมือถือ — ให้ผู้ใช้เห็น "ยอดสรุป" ก่อนเป็นอันดับแรก
+   แล้วค่อยกดเปิดเมนูเมื่อต้องการกรองข้อมูล (ลดความรกของหน้าจอเล็ก) */
+function toggleControls() {
+  const btn = $("ctrl-toggle");
+  const header = document.querySelector("header.glass");
+  const range = $("range-section");
+  const open = !(btn && btn.classList.contains("open"));
+  if (btn) { btn.classList.toggle("open", open); btn.setAttribute("aria-expanded", String(open)); }
+  if (header) header.classList.toggle("ctrl-open", open);
+  if (range) range.classList.toggle("ctrl-open", open);
+  const t = $("ctrl-toggle-text");
+  if (t) t.textContent = open ? "ซ่อนเมนูควบคุม" : "ตัวกรอง / เมนูควบคุม";
+}
+
 function setRangeMode(mode) {
   dateFilter.mode = mode;
   // ปรับสไตล์ปุ่มโหมด
-  [["rmode-all", "all"], ["rmode-week", "week"], ["rmode-range", "range"]].forEach(([id, m]) => {
+  [["rmode-all", "all"], ["rmode-week", "week"], ["rmode-month", "month"], ["rmode-year", "year"], ["rmode-range", "range"]].forEach(([id, m]) => {
     const b = $(id); if (b) b.className = "btn " + (m === mode ? "btn-cyan" : "btn-ghost"); if (b) b.style.padding = "8px 14px";
   });
-  $("week-nav").style.display = mode === "week" ? "flex" : "none";
-  $("range-pick").style.display = mode === "range" ? "flex" : "none";
+  const show = (id, on) => { const e = $(id); if (e) e.style.display = on ? "flex" : "none"; };
+  show("week-nav",  mode === "week");
+  show("month-nav", mode === "month");
+  show("year-nav",  mode === "year");
+  show("range-pick", mode === "range");
 
   if (mode === "all") {
     dateFilter.fromKey = dateFilter.toKey = null;
   } else if (mode === "week") {
     applyWeek();
+  } else if (mode === "month") {
+    applyMonth();
+  } else if (mode === "year") {
+    applyYear();
   } else if (mode === "range") {
     // ตั้งค่าเริ่มต้นช่วง = สัปดาห์นี้ ถ้ายังไม่ได้เลือก
     if (!$("range-from").value || !$("range-to").value) {
@@ -1630,6 +1726,49 @@ function shiftWeek(delta) {
 function thisWeek() {
   dateFilter.weekOffset = 0;
   applyWeek(); updateRangeSummary(); renderAll();
+}
+
+/* ---- รายเดือน ----
+   ใช้เคล็ดของ Date: วันที่ 0 ของเดือนถัดไป = วันสุดท้ายของเดือนนี้
+   จึงได้วันสิ้นเดือนถูกต้องอัตโนมัติ (28/29/30/31) โดยไม่ต้องเช็คปีอธิกสุรทินเอง */
+const TH_MONTHS = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+                   "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+
+function applyMonth() {
+  const now = new Date();
+  const first = new Date(now.getFullYear(), now.getMonth() + dateFilter.monthOffset, 1);
+  const last  = new Date(first.getFullYear(), first.getMonth() + 1, 0);
+  dateFilter.fromKey = dateKeyFromDate(first);
+  dateFilter.toKey   = dateKeyFromDate(last);
+  const lbl = $("month-label");
+  // แสดงปี พ.ศ. ให้ตรงกับบริบทผู้ใช้ในไทย
+  if (lbl) lbl.textContent = `${TH_MONTHS[first.getMonth()]} ${first.getFullYear() + 543}`;
+}
+function shiftMonth(delta) {
+  dateFilter.monthOffset += delta;
+  applyMonth(); updateRangeSummary(); renderAll();
+}
+function thisMonth() {
+  dateFilter.monthOffset = 0;
+  applyMonth(); updateRangeSummary(); renderAll();
+}
+
+/* ---- รายปี ---- */
+function applyYear() {
+  const now = new Date();
+  const y = now.getFullYear() + dateFilter.yearOffset;
+  dateFilter.fromKey = dateKeyFromDate(new Date(y, 0, 1));
+  dateFilter.toKey   = dateKeyFromDate(new Date(y, 11, 31));
+  const lbl = $("year-label");
+  if (lbl) lbl.textContent = `ปี พ.ศ. ${y + 543} (${y})`;
+}
+function shiftYear(delta) {
+  dateFilter.yearOffset += delta;
+  applyYear(); updateRangeSummary(); renderAll();
+}
+function thisYear() {
+  dateFilter.yearOffset = 0;
+  applyYear(); updateRangeSummary(); renderAll();
 }
 
 function applyCustomRange() {
