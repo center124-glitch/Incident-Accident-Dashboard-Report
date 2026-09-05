@@ -429,6 +429,8 @@
   #present-exit { display: none; position: fixed; top: 14px; right: 14px; z-index: 70; }
   body.presenting #present-exit { display: inline-flex; }
   body.presenting #btn-present { display: none; }
+  /* โหมดนำเสนอ = จอแสดงผลล้วน ไม่ควรมีปุ่มควบคุมค้างอยู่ (รวมปุ่มเปิดเมนูของมือถือ/แท็บเล็ต) */
+  body.presenting #ctrl-toggle { display: none !important; }
   /* ===== Responsive balance เพิ่มเติม ===== */
   @media (min-width: 641px) and (max-width: 1023px) {
     #analytics-cards > div { min-height: 130px; align-items: center; }
