@@ -529,6 +529,17 @@
   .brand-hint.boot { display: none; }            /* ตอนบูต ไม่ต้องมีข้อความ "แตะเพื่อเข้า" */
   #brand-splash.locked .brand-hint.boot { display: inline-flex; }
   #brand-splash.locked .brand-hint.loading { display: none; }
+
+  .brand-clock { margin-top: 18px; text-align: center; }
+  .brand-clock-time {
+    font-family: 'Share Tech Mono','IBM Plex Sans Thai',monospace;
+    font-size: clamp(2.1rem, 9vw, 3.2rem); font-weight: 700; line-height: 1;
+    letter-spacing: .06em; color: #eaf6ff; text-shadow: 0 0 18px rgba(0,0,0,.5);
+  }
+  .brand-clock-date {
+    margin-top: 8px; font-family: 'IBM Plex Sans Thai',sans-serif;
+    font-size: clamp(.82rem, 3.4vw, 1rem); letter-spacing: .04em; opacity: .9;
+  }
   .brand-dots { display: inline-flex; gap: 5px; }
   .brand-dots i { width: 7px; height: 7px; border-radius: 50%; background: #00e5ff; display: inline-block; animation: brandDot 1.2s ease-in-out infinite; }
   .brand-dots i:nth-child(2) { animation-delay: .2s; } .brand-dots i:nth-child(3) { animation-delay: .4s; }
@@ -677,10 +688,10 @@
           </button>
           <select id="auto-refresh" onchange="setAutoRefresh(this.value)" class="cy-select" style="width:auto; padding:8px 10px; font-size:.78rem" title="อัปเดตอัตโนมัติ">
             <option value="0">⏱️ อัปเดตเอง</option>
-            <option value="1">🔄 ทุก 1 นาที</option>
-            <option value="2">🔄 ทุก 2 นาที</option>
-            <option value="5">🔄 ทุก 5 นาที</option>
             <option value="10">🔄 ทุก 10 นาที</option>
+            <option value="15">🔄 ทุก 15 นาที</option>
+            <option value="20">🔄 ทุก 20 นาที</option>
+            <option value="30">🔄 ทุก 30 นาที</option>
           </select>
           <span id="last-updated" class="text-dim" style="font-size:.72rem; white-space:nowrap"></span>
         </div>
@@ -1515,8 +1526,21 @@ function markUpdated() {
 /* =================================================================
  *  AUTO-REFRESH — ดึงข้อมูลอัตโนมัติทุก N นาที
  * ================================================================= */
+/* ตัวเลือกช่วงอัปเดตที่รองรับ (นาที) — 0 = อัปเดตเอง */
+const AUTO_REFRESH_CHOICES = [0, 10, 15, 20, 30];
+
 function setAutoRefresh(minutes) {
-  autoMinutes = parseInt(minutes, 10) || 0;
+  let req = parseInt(minutes, 10);
+  if (!Number.isFinite(req) || req < 0) req = 0;
+  // ปรับค่าให้ตรงกับตัวเลือกที่มีจริงเสมอ
+  // เหตุผล: ผู้ใช้เดิมอาจมีค่าที่บันทึกไว้จากชุดตัวเลือกเก่า (เช่น 1, 2, 5 นาที)
+  // ถ้าปล่อยไว้ dropdown จะแสดงเป็นค่าว่างและผู้ใช้สับสน จึงเลือกค่าที่ใกล้ที่สุดแทน
+  if (!AUTO_REFRESH_CHOICES.includes(req)) {
+    req = req <= 0 ? 0 : AUTO_REFRESH_CHOICES
+      .filter(v => v > 0)
+      .reduce((best, v) => Math.abs(v - req) < Math.abs(best - req) ? v : best);
+  }
+  autoMinutes = req;
   try { localStorage.setItem("iacc-auto-min", String(autoMinutes)); } catch (e) {}
 
   if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
@@ -3169,13 +3193,14 @@ window.addEventListener("DOMContentLoaded", () => {
     startClock();
     loadData();
 
-    // เรียกคืนค่า auto-refresh ที่บันทึกไว้ — ถ้ายังไม่เคยตั้ง ใช้ค่าเริ่มต้น "ทุก 1 นาที"
-    // (เพื่อให้ Command Center เห็นข้อมูลล่าสุดอัตโนมัติตั้งแต่เปิดครั้งแรก)
+    // เรียกคืนค่า auto-refresh ที่บันทึกไว้ — ถ้ายังไม่เคยตั้ง ใช้ค่าเริ่มต้น "ทุก 10 นาที"
+    // หมายเหตุ: setAutoRefresh() จะปรับค่าที่ไม่อยู่ในตัวเลือก (เช่นค่าเก่า 1/2/5 นาที)
+    // ให้ไปหาค่าที่ใกล้เคียงที่สุดโดยอัตโนมัติ จึงไม่เกิดปัญหา dropdown ว่างเปล่า
     try {
       const raw = localStorage.getItem("iacc-auto-min");
-      const savedMin = (raw === null) ? 1 : (parseInt(raw, 10) || 0);
+      const savedMin = (raw === null) ? 10 : (parseInt(raw, 10) || 0);
       if (savedMin > 0) setAutoRefresh(savedMin); else { const s = $("auto-refresh"); if (s) s.value = "0"; }
-    } catch (e) { setAutoRefresh(1); }
+    } catch (e) { setAutoRefresh(10); }
 
     // กลับมาที่แท็บ → ดึงข้อมูลทันที (ถ้าเปิด auto-refresh ไว้)
     document.addEventListener("visibilitychange", () => {
@@ -3214,7 +3239,7 @@ window.addEventListener("load", () => {
 <script id="brand-splash-script">
 (function () {
   "use strict";
-  var CFG = {"name": "SBK Command Center", "shortName": "Command", "title": "COMMAND CENTER", "subtitle": "Incident · Accident", "loadingText": "กำลังเข้าสู่ศูนย์บัญชาการ", "lockText": "แตะเพื่อเข้าสู่ระบบ", "theme": "#070b18", "bg": "#070b18", "icon": "<svg viewBox=\"0 0 512 512\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"Command Center\">\n  <defs>\n    <linearGradient id=\"dbBg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#0c1740\"/><stop offset=\".55\" stop-color=\"#0a1230\"/><stop offset=\"1\" stop-color=\"#04060f\"/>\n    </linearGradient>\n    <linearGradient id=\"dbPulse\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\n      <stop offset=\"0\" stop-color=\"#00e5ff\"/><stop offset=\"1\" stop-color=\"#b9fbff\"/>\n    </linearGradient>\n    <radialGradient id=\"dbGlow\" cx=\"50%\" cy=\"42%\" r=\"60%\">\n      <stop offset=\"0\" stop-color=\"#0ea5c9\" stop-opacity=\".55\"/><stop offset=\"1\" stop-color=\"#0ea5c9\" stop-opacity=\"0\"/>\n    </radialGradient>\n    <filter id=\"dbBlur\" x=\"-40%\" y=\"-40%\" width=\"180%\" height=\"180%\">\n      <feGaussianBlur stdDeviation=\"7\" result=\"b\"/><feMerge><feMergeNode in=\"b\"/><feMergeNode in=\"SourceGraphic\"/></feMerge>\n    </filter>\n  </defs>\n  <rect width=\"512\" height=\"512\" rx=\"114\" fill=\"url(#dbBg)\"/>\n  <circle cx=\"256\" cy=\"220\" r=\"220\" fill=\"url(#dbGlow)\"/>\n  <rect x=\"16\" y=\"16\" width=\"480\" height=\"480\" rx=\"100\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".28\" stroke-width=\"3\"/>\n  <circle cx=\"256\" cy=\"256\" r=\"158\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".12\" stroke-width=\"3\"/>\n  <circle cx=\"256\" cy=\"256\" r=\"116\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".10\" stroke-width=\"2\"/>\n  <path d=\"M256 92 L396 148 V270 C396 356 332 410 256 438 C180 410 116 356 116 270 V148 Z\"\n        fill=\"#0a1a3e\" fill-opacity=\".85\" stroke=\"#00e5ff\" stroke-opacity=\".6\" stroke-width=\"6\"/>\n  <path d=\"M146 272 H206 L232 206 L270 338 L300 250 L320 272 H366\" fill=\"none\"\n        stroke=\"url(#dbPulse)\" stroke-width=\"15\" stroke-linecap=\"round\" stroke-linejoin=\"round\" filter=\"url(#dbBlur)\"/>\n  <circle cx=\"372\" cy=\"150\" r=\"19\" fill=\"#ff2d55\" filter=\"url(#dbBlur)\"/>\n</svg>", "idleMs": 60000, "bootMs": 1900, "onEnter": function(){ try{ if(typeof loadData==='function') loadData(true);}catch(e){} }, "isPaused": function(){ return document.body.classList.contains('presenting'); }};
+  var CFG = {"name": "SBK Command Center", "shortName": "Command", "title": "COMMAND CENTER", "subtitle": "Incident · Accident", "loadingText": "กำลังเข้าสู่ศูนย์บัญชาการ", "lockText": "แตะเพื่อเข้าสู่ระบบ", "theme": "#070b18", "bg": "#070b18", "icon": "<svg viewBox=\"0 0 512 512\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"Command Center\">\n  <defs>\n    <linearGradient id=\"dbBg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#0c1740\"/><stop offset=\".55\" stop-color=\"#0a1230\"/><stop offset=\"1\" stop-color=\"#04060f\"/>\n    </linearGradient>\n    <linearGradient id=\"dbPulse\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\n      <stop offset=\"0\" stop-color=\"#00e5ff\"/><stop offset=\"1\" stop-color=\"#b9fbff\"/>\n    </linearGradient>\n    <radialGradient id=\"dbGlow\" cx=\"50%\" cy=\"42%\" r=\"60%\">\n      <stop offset=\"0\" stop-color=\"#0ea5c9\" stop-opacity=\".55\"/><stop offset=\"1\" stop-color=\"#0ea5c9\" stop-opacity=\"0\"/>\n    </radialGradient>\n    <filter id=\"dbBlur\" x=\"-40%\" y=\"-40%\" width=\"180%\" height=\"180%\">\n      <feGaussianBlur stdDeviation=\"7\" result=\"b\"/><feMerge><feMergeNode in=\"b\"/><feMergeNode in=\"SourceGraphic\"/></feMerge>\n    </filter>\n  </defs>\n  <rect width=\"512\" height=\"512\" rx=\"114\" fill=\"url(#dbBg)\"/>\n  <circle cx=\"256\" cy=\"220\" r=\"220\" fill=\"url(#dbGlow)\"/>\n  <rect x=\"16\" y=\"16\" width=\"480\" height=\"480\" rx=\"100\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".28\" stroke-width=\"3\"/>\n  <circle cx=\"256\" cy=\"256\" r=\"158\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".12\" stroke-width=\"3\"/>\n  <circle cx=\"256\" cy=\"256\" r=\"116\" fill=\"none\" stroke=\"#00e5ff\" stroke-opacity=\".10\" stroke-width=\"2\"/>\n  <path d=\"M256 92 L396 148 V270 C396 356 332 410 256 438 C180 410 116 356 116 270 V148 Z\"\n        fill=\"#0a1a3e\" fill-opacity=\".85\" stroke=\"#00e5ff\" stroke-opacity=\".6\" stroke-width=\"6\"/>\n  <path d=\"M146 272 H206 L232 206 L270 338 L300 250 L320 272 H366\" fill=\"none\"\n        stroke=\"url(#dbPulse)\" stroke-width=\"15\" stroke-linecap=\"round\" stroke-linejoin=\"round\" filter=\"url(#dbBlur)\"/>\n  <circle cx=\"372\" cy=\"150\" r=\"19\" fill=\"#ff2d55\" filter=\"url(#dbBlur)\"/>\n</svg>", "idleMs": 180000, "bootMs": 1900, "onEnter": function(){ try{ if(typeof loadData==='function') loadData(true);}catch(e){} }, "isPaused": function(){ return document.body.classList.contains('presenting'); }};
 
   /* ---------- 1) ไอคอนหน้าจอโฮม (favicon / apple-touch / manifest) ---------- */
   function svgToDataUri(svg) { return "data:image/svg+xml," + encodeURIComponent(svg); }
@@ -3262,7 +3287,42 @@ window.addEventListener("load", () => {
   }
 
   /* ---------- 2) หน้าจอโลโก้ (splash) + ระบบล็อกเมื่อไม่ใช้งาน ---------- */
-  var el, IDLE_MS = CFG.idleMs || 60000, idleTimer = null, mode = "boot", raf = null, lastMove = 0;
+  var el, IDLE_MS = CFG.idleMs || 180000, idleTimer = null, bootTimer = null, mode = "boot", raf = null, lastMove = 0;
+
+
+  /* ---------- นาฬิกา + วัน/เดือน/ปี บนหน้าโลโก้และหน้าพักจอ ----------
+     เดินเฉพาะตอนที่ splash แสดงอยู่จริง เพื่อไม่ให้ timer ทำงานทิ้งไว้เปล่า ๆ
+     (ประหยัดแบตเตอรี่บนมือถือ และลดภาระ CPU ตอนใช้งานแอปปกติ) */
+  var clockTimer = null;
+  var TH_MONTHS_FULL = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+                        "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+  var TH_DAYS = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+
+  function paintClock() {
+    try {
+      var now = new Date();
+      var t = document.getElementById("brand-clock-time");
+      var d = document.getElementById("brand-clock-date");
+      if (t) t.textContent = pad2(now.getHours()) + ":" + pad2(now.getMinutes()) + ":" + pad2(now.getSeconds());
+      if (d) {
+        // แสดงปี พ.ศ. ให้ตรงบริบทผู้ใช้ในไทย
+        d.textContent = "วัน" + TH_DAYS[now.getDay()] + "ที่ " + now.getDate() + " " +
+                        TH_MONTHS_FULL[now.getMonth()] + " พ.ศ. " + (now.getFullYear() + 543);
+      }
+    } catch (e) { /* นาฬิกาพังต้องไม่ทำให้หน้าจอพักทั้งหน้าพัง */ }
+  }
+  function startClock() {
+    paintClock();
+    // เทียบกับ null ตรง ๆ ไม่ใช้ truthy check
+    // เพราะ timer id ที่คืนมาอาจเป็นเลข 0 ได้ในบางสภาพแวดล้อม ซึ่ง truthy check จะมองว่า "ไม่มี timer"
+    // ทำให้เกิด timer ค้างซ้อนกัน (memory/CPU leak)
+    if (clockTimer !== null) clearInterval(clockTimer);
+    clockTimer = setInterval(paintClock, 1000);
+  }
+  function stopClock() {
+    if (clockTimer !== null) { clearInterval(clockTimer); clockTimer = null; }
+  }
 
   function build() {
     el = document.createElement("div");
@@ -3277,6 +3337,10 @@ window.addEventListener("load", () => {
         '<div class="brand-text">' +
           '<div class="brand-title">' + CFG.title + '</div>' +
           '<div class="brand-sub">' + CFG.subtitle + '</div>' +
+          '<div class="brand-clock">' +
+            '<div class="brand-clock-time" id="brand-clock-time">--:--:--</div>' +
+            '<div class="brand-clock-date" id="brand-clock-date">—</div>' +
+          '</div>' +
           '<div style="margin-top:16px">' +
             '<span class="brand-hint loading"><span class="brand-dots"><i></i><i></i><i></i></span> ' + (CFG.loadingText || "กำลังเข้าสู่ระบบ") + '</span>' +
             '<span class="brand-hint boot"><i class="fa-solid fa-hand-pointer"></i> ' + (CFG.lockText || "แตะเพื่อเข้าสู่ระบบ") + '</span>' +
@@ -3292,15 +3356,21 @@ window.addEventListener("load", () => {
     mode = kind;
     el.classList.toggle("locked", kind === "lock");
     el.classList.add("show");
+    startClock();
     // ล็อกการเลื่อนพื้นหลังขณะแสดง splash (ซ่อนข้อมูล = ความเป็นส่วนตัว)
     document.documentElement.style.overflow = "hidden";
   }
   function hideSplash() {
     el.classList.remove("show");
+    stopClock();
     document.documentElement.style.overflow = "";
   }
 
   function enter() {           // ออกจาก splash เข้าโปรแกรม แล้วเริ่มจับเวลา idle ใหม่
+    // กันเข้าซ้ำซ้อน: โหมด Auto-Enter มีตัวจับเวลารออยู่ ถ้าผู้ใช้แตะเข้ามาเองก่อน
+    // แล้วตัวจับเวลายิงตามทีหลัง จะทำให้ onEnter (โหลดข้อมูล) ทำงาน 2 รอบโดยไม่จำเป็น
+    if (mode === "app") return;
+    if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }
     hideSplash();
     mode = "app";
     if (typeof CFG.onEnter === "function") { try { CFG.onEnter(); } catch (e) {} }
@@ -3311,7 +3381,12 @@ window.addEventListener("load", () => {
 
   function armIdle() {
     clearTimeout(idleTimer);
-    if (paused()) { return; }   // เช่น โหมดนำเสนอเต็มจอ — ไม่ล็อก
+    if (paused()) {
+      // อยู่ในโหมดนำเสนอ (ไม่ล็อกจอ) — แต่ต้องกลับมาตรวจเป็นระยะ
+      // ไม่เช่นนั้นถ้าออกจากโหมดนำเสนอโดยไม่มี event ใด ๆ ตัวจับเวลาจะไม่ถูกตั้งใหม่เลย
+      idleTimer = setTimeout(armIdle, 30000);
+      return;
+    }
     idleTimer = setTimeout(function () {
       if (mode !== "app") return;
       if (paused()) { armIdle(); return; }
@@ -3342,9 +3417,9 @@ window.addEventListener("load", () => {
     build();
     installIcons();
     bindActivity();
-    // แสดง "แค่หน้าโลโก้" ค้างไว้ก่อนเสมอ — ไม่โชว์ข้อมูลจนกว่าผู้ใช้จะแตะ/กดเข้าสู่ระบบ
-    // (ความเป็นส่วนตัว: ข้อมูลจะไม่ปรากฏเองโดยอัตโนมัติ)
-    showSplash("lock");
+    // เปิดโปรแกรม: โชว์หน้าโลโก้ครู่หนึ่ง แล้วเข้าสู่แดชบอร์ดอัตโนมัติ (Auto-Enter)
+    showSplash("boot");
+    bootTimer = setTimeout(enter, CFG.bootMs || 1900);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
